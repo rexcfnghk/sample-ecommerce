@@ -10,8 +10,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="490a0d97-5b11-4baf-966e-bc2296adae07" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Repositories/CatchDuplicateSqlUserRepositoryTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/CatchDuplicateSqlUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/CatchDuplicateSqlUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/SampleECommerce.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/SampleECommerce.Tests.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/CatchDuplicateSqlUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/CatchDuplicateSqlUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/SampleECommerce.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/SampleECommerce.Web.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +41,9 @@
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a7387280086247f8b6f501511e54b82f2ba8a0/7e/d62231b2/IDataParameter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/a7387280086247f8b6f501511e54b82f2ba8a0/9f/9f5ed628/IDbDataParameter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/eb564be7d6d6c825eb605b015bc18ac55ca77e1ef3ea8abbd1b416abbda2f3f/NullAsserts.cs" root0="SKIP_HIGHLIGHTING" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="SWEA" />
   </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
@@ -136,7 +140,7 @@
       <workItem from="1721455241383" duration="4773000" />
       <workItem from="1721476622793" duration="26000" />
       <workItem from="1721476657353" duration="6079000" />
-      <workItem from="1721483886182" duration="4311000" />
+      <workItem from="1721483886182" duration="4728000" />
     </task>
     <servers />
   </component>
