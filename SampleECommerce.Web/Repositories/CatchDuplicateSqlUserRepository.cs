@@ -1,7 +1,8 @@
 ﻿using Microsoft.Data.SqlClient;
 using SampleECommerce.Web.Exceptions;
+using SampleECommerce.Web.Services;
 
-namespace SampleECommerce.Web.Services;
+namespace SampleECommerce.Web.Repositories;
 
 public class CatchDuplicateSqlUserRepository : IUserRepository
 {

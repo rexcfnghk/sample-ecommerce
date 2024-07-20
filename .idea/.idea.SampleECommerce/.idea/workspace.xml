@@ -10,22 +10,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="490a0d97-5b11-4baf-966e-bc2296adae07" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Exceptions/DuplicateUserNameException.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Filters/HandleDuplicateUserNameExceptionFilter.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/CatchDuplicateSqlUserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.local.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/Controllers/UsersControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Controllers/UsersControllerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/Services/UserSignupServiceTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Services/UserSignupServiceTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/SqlUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/SqlUserRepository.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/AesPasswordEncryptionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/AesPasswordEncryptionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/IPasswordEncryptionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IPasswordEncryptionService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserRepository.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Repositories/CatchDuplicateSqlUserRepositoryTests.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/CatchDuplicateSqlUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/CatchDuplicateSqlUserRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +136,7 @@
       <workItem from="1721455241383" duration="4773000" />
       <workItem from="1721476622793" duration="26000" />
       <workItem from="1721476657353" duration="6079000" />
-      <workItem from="1721483886182" duration="3857000" />
+      <workItem from="1721483886182" duration="4311000" />
     </task>
     <servers />
   </component>
@@ -179,13 +165,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs</url>
-          <line>30</line>
+          <line>29</line>
           <properties documentPath="C:\Users\rexcf\source\SampleECommerce\SampleECommerce.Web\Controllers\UsersController.cs" containingFunctionPresentation="Method 'Signup'">
             <startOffsets>
-              <option value="905" />
+              <option value="866" />
             </startOffsets>
             <endOffsets>
-              <option value="958" />
+              <option value="919" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />
