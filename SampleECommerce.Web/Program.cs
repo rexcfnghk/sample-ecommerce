@@ -1,14 +1,28 @@
+using SimpleInjector;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.AddControllers();
+var serviceCollection = builder.Services;
+
+serviceCollection.AddEndpointsApiExplorer();
+serviceCollection.AddSwaggerGen();
+serviceCollection.AddControllers();
+
+var container = new SimpleInjector.Container();
+serviceCollection.AddSimpleInjector(
+    container,
+    options =>
+    {
+        options.AddAspNetCore().AddControllerActivation();
+    });
 
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
+app.Services.UseSimpleInjector(container);
+
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -17,11 +31,10 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+//app.UseAuthentication();
+
 app.MapControllers().WithOpenApi();
 
-app.Run();
+container.Verify();
 
-record WeatherForecast(DateOnly Date, int TemperatureC, string? Summary)
-{
-    public int TemperatureF => 32 + (int)(TemperatureC / 0.5556);
-}
+app.Run();
