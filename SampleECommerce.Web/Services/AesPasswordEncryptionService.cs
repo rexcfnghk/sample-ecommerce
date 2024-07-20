@@ -5,11 +5,11 @@ namespace SampleECommerce.Web.Services;
 
 public class AesPasswordEncryptionService : IPasswordEncryptionService
 {
-    public string Encrypt(string password, byte[] salt)
+    public byte[] Encrypt(string password, byte[] salt)
     {
         using var aes = Aes.Create();
         var encrypted = EncryptWithAes(password, aes.Key, salt);
-        return Encoding.UTF8.GetString(encrypted);
+        return encrypted;
     }
 
     private static byte[] EncryptWithAes(

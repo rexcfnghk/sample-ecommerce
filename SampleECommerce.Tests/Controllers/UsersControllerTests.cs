@@ -12,14 +12,6 @@ namespace SampleECommerce.Tests.Controllers;
 public class UsersControllerTests
 {
     [Theory, AutoNSubstituteData]
-    public void Test_ReturnsExpectedString(UsersController sut)
-    {
-        var result = sut.Test();
-
-        Assert.Equal("hi", result.Value);
-    }
-
-    [Theory, AutoNSubstituteData]
     public async Task Signup_ReturnsExpectedJwtToken(
         JwtToken expected,
         [Frozen] IUserSignupService mockUserSignupService,
@@ -36,6 +28,6 @@ public class UsersControllerTests
         
         var result = await sut.Signup(dto, token);
 
-        Assert.IsType<OkResult>(result);
+        Assert.IsType<CreatedResult>(result);
     }
 }

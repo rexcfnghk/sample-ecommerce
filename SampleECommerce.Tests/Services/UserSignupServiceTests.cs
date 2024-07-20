@@ -18,7 +18,7 @@ public class UserSignupServiceTests
     [Theory, AutoNSubstituteData]
     public async Task SignupAsync_SavesUserWithEncryptedPassword(
         byte[] salt,
-        string encryptedPassword,
+        byte[] encryptedPassword,
         UserSignupRequest request,
         [Frozen] ISaltService saltService,
         [Frozen] IPasswordEncryptionService passwordEncryptionService,

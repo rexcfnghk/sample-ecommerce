@@ -4,7 +4,7 @@ public interface IUserRepository
 {
     Task AddUserAsync(
         string userName,
-        string encryptedPassword,
+        byte[] encryptedPassword,
         byte[] salt,
         CancellationToken cancellationToken = default);
 }

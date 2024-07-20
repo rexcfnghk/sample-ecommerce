@@ -17,7 +17,7 @@ public class SqlUserRepository : IUserRepository
 
     public async Task AddUserAsync(
         string userName,
-        string encryptedPassword,
+        byte[] encryptedPassword,
         byte[] salt,
         CancellationToken cancellationToken = default)
     {

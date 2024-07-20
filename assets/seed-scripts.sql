@@ -1,0 +1,14 @@
+DROP DATABASE IF EXISTS SampleECommerceDb
+
+CREATE DATABASE SampleECommerceDb
+
+CREATE TABLE Users (
+    Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
+    UserName NVARCHAR(50),
+    EncryptedPassword BINARY(128),
+    Salt BINARY(16),
+
+    CONSTRAINT AK_UserNameId UNIQUE(UserName)
+)
+
+GO

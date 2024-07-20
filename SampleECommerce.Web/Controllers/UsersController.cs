@@ -1,4 +1,4 @@
-﻿using System.Diagnostics.CodeAnalysis;
+﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Mvc;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Models;
@@ -7,7 +7,7 @@ using SampleECommerce.Web.Services;
 namespace SampleECommerce.Web.Controllers;
 
 [ApiController]
-[Route("[controller]/[action]")]
+[Route("[controller]")]
 public class UsersController : ControllerBase
 {
     private readonly IUserSignupService _userSignupService;
@@ -17,13 +17,10 @@ public class UsersController : ControllerBase
         _userSignupService = userSignupService;
     }
 
-    [HttpGet]
-    public ActionResult<string> Test()
-    {
-        return "hi";
-    }
-
     [HttpPost]
+    [Consumes(MediaTypeNames.Application.Json)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Signup(
         UserSignupRequestDto dto,
         CancellationToken token = default)
@@ -32,6 +29,6 @@ public class UsersController : ControllerBase
 
         await _userSignupService.SignupAsync(request, token);
 
-        return Ok();
+        return Created();
     }
 }

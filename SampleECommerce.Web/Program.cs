@@ -1,3 +1,4 @@
+using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Services;
 using SimpleInjector;
@@ -10,7 +11,11 @@ var serviceCollection = builder.Services;
 
 serviceCollection.AddEndpointsApiExplorer();
 serviceCollection.AddSwaggerGen();
-serviceCollection.AddControllers();
+serviceCollection.AddControllers(
+    options =>
+    {
+        options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
+    });
 
 var container = new Container();
 serviceCollection.AddSimpleInjector(
@@ -24,6 +29,7 @@ container.RegisterSingleton<IUserSignupService, UserSignupService>();
 container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
 container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
 container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
+container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
 
 var app = builder.Build();
 

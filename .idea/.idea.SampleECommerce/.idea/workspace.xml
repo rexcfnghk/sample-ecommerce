@@ -10,22 +10,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="490a0d97-5b11-4baf-966e-bc2296adae07" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/SqlUserRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/AesPasswordEncryptionService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IPasswordEncryptionService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/ISaltService.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserRepository.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/Random128BitsSaltService.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Exceptions/DuplicateUserNameException.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Filters/HandleDuplicateUserNameExceptionFilter.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/CatchDuplicateSqlUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.local.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.local.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/dataSources/6e841d00-6fb6-4248-bc4c-9d2838c89c45/storage_v2/_src_/database/master.YiqNvw/schema/dbo.sYMBAA.zip" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.SampleECommerce/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/Controllers/UsersControllerTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Controllers/UsersControllerTests.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/SampleECommerce.Tests.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/SampleECommerce.Tests.csproj" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SampleECommerce.Tests/Services/UserSignupServiceTests.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Tests/Services/UserSignupServiceTests.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Program.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/SampleECommerce.Web.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/SampleECommerce.Web.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserSignupService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserSignupService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/UserSignupService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/UserSignupService.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/SqlUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Repositories/SqlUserRepository.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/AesPasswordEncryptionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/AesPasswordEncryptionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/IPasswordEncryptionService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IPasswordEncryptionService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserRepository.cs" beforeDir="false" afterPath="$PROJECT_DIR$/SampleECommerce.Web/Services/IUserRepository.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -41,8 +41,11 @@
   <component name="HighlightingSettingsPerFile">
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Abstractions/src/ActionContext.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Abstractions/src/ModelBinding/ModelStateDictionary.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Core/src/ActionResult.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Core/src/BadRequestResult.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Core/src/Builder/ControllerEndpointRouteBuilderExtensions.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Core/src/ControllerBase.cs" root0="SKIP_HIGHLIGHTING" />
+    <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/aspnetcore/2f1db20456007c9515068a35a65afdf99af70bc6/src/Mvc/Mvc.Core/src/StatusCodeResult.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/2aade6beb02ea367fd97c4070a4198802fe61c03/src/libraries/System.ComponentModel.Annotations/src/System/ComponentModel/DataAnnotations/RequiredAttribute.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/2aade6beb02ea367fd97c4070a4198802fe61c03/src/libraries/System.Data.Common/src/System/Data/Common/DbParameter.cs" root0="SKIP_HIGHLIGHTING" />
     <setting file="file://$USER_HOME$/AppData/Local/Symbols/src/dotnet/runtime/2aade6beb02ea367fd97c4070a4198802fe61c03/src/libraries/System.Private.CoreLib/src/System/Guid.Windows.cs" root0="SKIP_HIGHLIGHTING" />
@@ -61,33 +64,33 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET Launch Settings Profile.SampleECommerce.Web: IIS Express.executor": "Debug",
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "db0eaa8e-3165-4f97-bf30-4c530e77e8e9.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "ignore.virus.scanning.warn.message": "true",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "project.propDebugger",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET Launch Settings Profile.SampleECommerce.Web: IIS Express.executor&quot;: &quot;Debug&quot;,
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;db0eaa8e-3165-4f97-bf30-4c530e77e8e9.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;project.propDebugger&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "sqlserver.localdb"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;sqlserver.localdb&quot;
     ],
-    "rider.external.source.directories": [
-      "C:\\Users\\rexcf\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache",
-      "C:\\Users\\rexcf\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache",
-      "C:\\Users\\rexcf\\AppData\\Local\\Symbols\\src"
+    &quot;rider.external.source.directories&quot;: [
+      &quot;C:\\Users\\rexcf\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\DecompilerCache&quot;,
+      &quot;C:\\Users\\rexcf\\AppData\\Roaming\\JetBrains\\Rider2024.1\\resharper-host\\SourcesCache&quot;,
+      &quot;C:\\Users\\rexcf\\AppData\\Local\\Symbols\\src&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected=".NET Launch Settings Profile.SampleECommerce.Web: IIS Express">
     <configuration name="SampleECommerce.Web: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/SampleECommerce.Web/SampleECommerce.Web.csproj" />
@@ -146,7 +149,8 @@
       <workItem from="1721449795922" duration="1489000" />
       <workItem from="1721455241383" duration="4773000" />
       <workItem from="1721476622793" duration="26000" />
-      <workItem from="1721476657353" duration="5447000" />
+      <workItem from="1721476657353" duration="6079000" />
+      <workItem from="1721483886182" duration="3857000" />
     </task>
     <servers />
   </component>
@@ -175,13 +179,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="DotNet Breakpoints">
           <url>file://$PROJECT_DIR$/SampleECommerce.Web/Controllers/UsersController.cs</url>
-          <line>32</line>
+          <line>30</line>
           <properties documentPath="C:\Users\rexcf\source\SampleECommerce\SampleECommerce.Web\Controllers\UsersController.cs" containingFunctionPresentation="Method 'Signup'">
             <startOffsets>
-              <option value="813" />
+              <option value="905" />
             </startOffsets>
             <endOffsets>
-              <option value="866" />
+              <option value="958" />
             </endOffsets>
           </properties>
           <option name="timeStamp" value="2" />
