@@ -1,3 +1,5 @@
+using SampleECommerce.Web.Repositories;
+using SampleECommerce.Web.Services;
 using SimpleInjector;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,13 +12,18 @@ serviceCollection.AddEndpointsApiExplorer();
 serviceCollection.AddSwaggerGen();
 serviceCollection.AddControllers();
 
-var container = new SimpleInjector.Container();
+var container = new Container();
 serviceCollection.AddSimpleInjector(
     container,
     options =>
     {
         options.AddAspNetCore().AddControllerActivation();
     });
+
+container.RegisterSingleton<IUserSignupService, UserSignupService>();
+container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
+container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
+container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
 
 var app = builder.Build();
 
@@ -38,3 +45,16 @@ app.MapControllers().WithOpenApi();
 container.Verify();
 
 app.Run();
+return;
+
+string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
+{
+    var connectionString = webApplicationBuilder.Configuration.GetConnectionString("Default");
+    if (connectionString == null)
+    {
+        throw new InvalidOperationException(
+            "Cannot retrieve connection string");
+    }
+
+    return connectionString;
+}

@@ -24,12 +24,14 @@ public class UsersController : ControllerBase
     }
 
     [HttpPost]
-    public async Task<ActionResult<JwtTokenDto>> Signup(UserSignupRequestDto dto, CancellationToken token)
+    public async Task<ActionResult> Signup(
+        UserSignupRequestDto dto,
+        CancellationToken token = default)
     {
         var request = new UserSignupRequest(dto.UserName, dto.Password);
 
-        var jwtToken = await _userSignupService.SignupAsync(request, token);
+        await _userSignupService.SignupAsync(request, token);
 
-        return Ok(jwtToken);
+        return Ok();
     }
 }

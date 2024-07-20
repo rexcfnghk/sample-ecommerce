@@ -4,10 +4,33 @@ namespace SampleECommerce.Web.Services;
 
 public class UserSignupService : IUserSignupService
 {
-    public Task<JwtToken> SignupAsync(
-        UserSignupRequest request,
-        CancellationToken cancellationToken)
+    private readonly ISaltService _saltService;
+    private readonly IPasswordEncryptionService _passwordEncryptionService;
+    private readonly IUserRepository _userRepository;
+
+    public UserSignupService(
+        ISaltService saltService,
+        IPasswordEncryptionService passwordEncryptionService,
+        IUserRepository userRepository)
     {
-        throw new NotImplementedException();
+        _saltService = saltService;
+        _passwordEncryptionService = passwordEncryptionService;
+        _userRepository = userRepository;
+    }
+
+    public Task SignupAsync(
+        UserSignupRequest request,
+        CancellationToken cancellationToken = default)
+    {
+        var salt = _saltService.GenerateSalt();
+
+        var encryptedPassword =
+            _passwordEncryptionService.Encrypt(request.Password, salt);
+
+        return _userRepository.AddUserAsync(
+            request.Username,
+            encryptedPassword,
+            salt,
+            cancellationToken);
     }
 }

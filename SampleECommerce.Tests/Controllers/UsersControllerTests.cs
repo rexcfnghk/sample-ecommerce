@@ -36,8 +36,6 @@ public class UsersControllerTests
         
         var result = await sut.Signup(dto, token);
 
-        Assert.IsType<OkObjectResult>(result.Result);
-        var okObjectResult = (OkObjectResult)result.Result;
-        Assert.Equal(expected, okObjectResult.Value);
+        Assert.IsType<OkResult>(result);
     }
 }

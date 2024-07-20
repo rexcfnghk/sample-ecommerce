@@ -4,7 +4,7 @@ namespace SampleECommerce.Web.Services;
 
 public interface IUserSignupService
 {
-    Task<JwtToken> SignupAsync(
+    Task SignupAsync(
         UserSignupRequest request,
         CancellationToken cancellationToken);
 }
