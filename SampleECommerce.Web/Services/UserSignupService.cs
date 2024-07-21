@@ -2,21 +2,18 @@
 
 namespace SampleECommerce.Web.Services;
 
-public class UserSignupService : IUserSignupService
+public class UserSignupService(
+    ISaltService saltService,
+    IPasswordEncryptionService passwordEncryptionService,
+    IUserRepository userRepository)
+    : IUserSignupService
 {
-    private readonly ISaltService _saltService;
-    private readonly IPasswordEncryptionService _passwordEncryptionService;
-    private readonly IUserRepository _userRepository;
+    private readonly ISaltService _saltService = saltService;
 
-    public UserSignupService(
-        ISaltService saltService,
-        IPasswordEncryptionService passwordEncryptionService,
-        IUserRepository userRepository)
-    {
-        _saltService = saltService;
-        _passwordEncryptionService = passwordEncryptionService;
-        _userRepository = userRepository;
-    }
+    private readonly IPasswordEncryptionService _passwordEncryptionService =
+        passwordEncryptionService;
+
+    private readonly IUserRepository _userRepository = userRepository;
 
     public Task SignupAsync(
         UserSignupRequest request,

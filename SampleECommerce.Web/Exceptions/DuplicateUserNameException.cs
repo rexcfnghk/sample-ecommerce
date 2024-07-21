@@ -1,5 +1,8 @@
-﻿namespace SampleECommerce.Web.Exceptions;
+﻿using JetBrains.Annotations;
 
+namespace SampleECommerce.Web.Exceptions;
+
+[PublicAPI]
 public class DuplicateUserNameException : Exception
 {
     public DuplicateUserNameException()

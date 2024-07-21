@@ -8,14 +8,10 @@ namespace SampleECommerce.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController : ControllerBase
+public class UsersController(IUserSignupService userSignupService)
+    : ControllerBase
 {
-    private readonly IUserSignupService _userSignupService;
-
-    public UsersController(IUserSignupService userSignupService)
-    {
-        _userSignupService = userSignupService;
-    }
+    private readonly IUserSignupService _userSignupService = userSignupService;
 
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]

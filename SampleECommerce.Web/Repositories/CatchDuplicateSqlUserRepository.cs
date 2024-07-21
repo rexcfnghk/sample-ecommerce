@@ -11,6 +11,8 @@ public class CatchDuplicateSqlUserRepository(IUserRepository decoratee)
 {
     private const int UniqueConstraintViolationErrorNumber = 2627;
 
+    private readonly IUserRepository _decoratee = decoratee;
+
     public async Task AddUserAsync(
         string userName,
         byte[] encryptedPassword,
@@ -19,7 +21,7 @@ public class CatchDuplicateSqlUserRepository(IUserRepository decoratee)
     {
         try
         {
-            await decoratee.AddUserAsync(
+            await _decoratee.AddUserAsync(
                 userName,
                 encryptedPassword,
                 salt,

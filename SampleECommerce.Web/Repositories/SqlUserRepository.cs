@@ -3,17 +3,12 @@ using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Repositories;
 
-public class SqlUserRepository : IUserRepository
+public class SqlUserRepository(string connectionString) : IUserRepository
 {
-    private static readonly string _command =
+    private const string Command =
         "INSERT INTO Users (UserName, EncryptedPassword, Salt) VALUES (@UserName, @EncryptedPassword, @Salt)";
     
-    private readonly string _connectionString;
-
-    public SqlUserRepository(string connectionString)
-    {
-        _connectionString = connectionString;
-    }
+    private readonly string _connectionString = connectionString;
 
     public async Task AddUserAsync(
         string userName,
@@ -22,7 +17,7 @@ public class SqlUserRepository : IUserRepository
         CancellationToken cancellationToken = default)
     {
         await using var sqlConnection = new SqlConnection(_connectionString);
-        await using var command = new SqlCommand(_command, sqlConnection);
+        await using var command = new SqlCommand(Command, sqlConnection);
         
         var sqlParameterCollection = command.Parameters;
         sqlParameterCollection.Add(new SqlParameter("@UserName", userName));
