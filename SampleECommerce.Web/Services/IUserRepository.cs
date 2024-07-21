@@ -1,4 +1,6 @@
-﻿namespace SampleECommerce.Web.Services;
+﻿using SampleECommerce.Web.Models;
+
+namespace SampleECommerce.Web.Services;
 
 public interface IUserRepository
 {
@@ -6,5 +8,9 @@ public interface IUserRepository
         string userName,
         byte[] encryptedPassword,
         byte[] salt,
+        CancellationToken cancellationToken = default);
+
+    Task<SignedUpUser?> RetrieveUserAsync(
+        string userName,
         CancellationToken cancellationToken = default);
 }

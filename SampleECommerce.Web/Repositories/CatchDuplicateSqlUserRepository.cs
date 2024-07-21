@@ -1,6 +1,7 @@
 ﻿using JetBrains.Annotations;
 using Microsoft.Data.SqlClient;
 using SampleECommerce.Web.Exceptions;
+using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Repositories;
@@ -35,4 +36,9 @@ public class CatchDuplicateSqlUserRepository(IUserRepository decoratee)
                 e);
         }
     }
+
+    public Task<SignedUpUser?> RetrieveUserAsync(
+        string userName,
+        CancellationToken cancellationToken = default) =>
+        _decoratee.RetrieveUserAsync(userName, cancellationToken);
 }

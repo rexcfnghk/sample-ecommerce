@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Authentication;
+using SampleECommerce.Web.AuthenticationHandlers;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Services;
@@ -16,6 +18,11 @@ serviceCollection.AddControllers(
     {
         options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
     });
+serviceCollection.AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions,
+        UserNamePasswordAuthenticationHandler>(
+        "UserNamePassword",
+        _ => { });
 
 var container = new Container();
 serviceCollection.AddSimpleInjector(
