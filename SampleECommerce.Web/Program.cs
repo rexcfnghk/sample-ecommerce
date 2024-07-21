@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using SampleECommerce.Web.Aes;
 using SampleECommerce.Web.AuthenticationHandlers;
 using SampleECommerce.Web.Filters;
+using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
@@ -40,6 +42,8 @@ container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConn
 container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
 container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
 container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
+container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
+RegisterAesKey();
 
 var app = builder.Build();
 
@@ -87,4 +91,16 @@ void AddAuthenticationToServices(IServiceCollection serviceCollection1)
         s => s.ImplementationType == typeof(UserNamePasswordAuthenticationHandler));
 
     serviceCollection1.Remove(authenticationHandlerDescriptor);
+}
+
+void RegisterAesKey()
+{
+    var aesKey = builder.Configuration["Aes:Key"];
+    if (aesKey == null)
+    {
+        throw new InvalidOperationException("Cannot retrieve AES Key");
+    }
+
+    var bytes = aesKey.Split(',').Select(byte.Parse).ToArray();
+    container.RegisterSingleton(() => new AesKey(bytes));
 }

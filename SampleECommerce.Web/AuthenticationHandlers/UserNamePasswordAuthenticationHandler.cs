@@ -12,7 +12,6 @@ namespace SampleECommerce.Web.AuthenticationHandlers;
 public class UserNamePasswordAuthenticationHandler(
     IPasswordEncryptionService passwordEncryptionService,
     IUserRepository userRepository,
-    ISerializer serializer,
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder)
@@ -24,7 +23,6 @@ public class UserNamePasswordAuthenticationHandler(
     private readonly IPasswordEncryptionService _passwordEncryptionService =
         passwordEncryptionService;
     private readonly IUserRepository _userRepository = userRepository;
-    private readonly ISerializer _serializer = serializer;
     
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
@@ -38,9 +36,8 @@ public class UserNamePasswordAuthenticationHandler(
                 "Anonymous");
             return AuthenticateResult.Success(anonymousTicket);
         }
-        
-        var requestDto =
-            await _serializer.DeserializeAsync<UserRequestDto>(Request.Body);
+
+        var requestDto = await Request.ReadFromJsonAsync<UserRequestDto>();
         if (requestDto is null)
         {
             return AuthenticateResult.Fail("Malformed request body for authentication");

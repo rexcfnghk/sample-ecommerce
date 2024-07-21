@@ -3,15 +3,14 @@ using Microsoft.IdentityModel.Tokens;
 
 namespace SampleECommerce.Web.Jwt;
 
-public class MicrosoftJwtGenerator(JsonWebTokenHandler jsonWebTokenHandler)
+public class MicrosoftJwtGenerator//(SymmetricSecurityKey securityKey, JsonWebTokenHandler jsonWebTokenHandler)
     : IJwtGenerator
 {
-    private readonly SymmetricSecurityKey
-    private readonly JsonWebTokenHandler _jsonWebTokenHandler = jsonWebTokenHandler;
+    // private readonly SymmetricSecurityKey _securityKey = securityKey;
+    // private readonly JsonWebTokenHandler _jsonWebTokenHandler = jsonWebTokenHandler;
 
     public string Generate(string userName)
     {
-        var signingCredentials = new SigningCredentials()
-        _jsonWebTokenHandler.C
+        return string.Empty;
     }
 }

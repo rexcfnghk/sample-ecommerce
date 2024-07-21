@@ -1,4 +1,5 @@
-﻿using Microsoft.Data.SqlClient;
+﻿using System.Data;
+using Microsoft.Data.SqlClient;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 
@@ -24,10 +25,9 @@ public class SqlUserRepository(string connectionString) : IUserRepository
         await using var command = new SqlCommand(InsertCommand, sqlConnection);
         
         var sqlParameterCollection = command.Parameters;
-        sqlParameterCollection.Add(new SqlParameter("@UserName", userName));
-        sqlParameterCollection.Add(
-            new SqlParameter("@EncryptedPassword", encryptedPassword));
-        sqlParameterCollection.Add(new SqlParameter("@Salt", salt));
+        sqlParameterCollection.AddWithValue("@UserName", userName);
+        sqlParameterCollection.AddWithValue("@EncryptedPassword", encryptedPassword);
+        sqlParameterCollection.AddWithValue("@Salt", salt);
 
         await sqlConnection.OpenAsync(cancellationToken);
         await command.ExecuteNonQueryAsync(cancellationToken);
@@ -38,16 +38,38 @@ public class SqlUserRepository(string connectionString) : IUserRepository
         CancellationToken cancellationToken = default)
     {
         await using var sqlConnection = new SqlConnection(_connectionString);
-        await using var query = new SqlCommand(InsertCommand, sqlConnection);
+        await using var query = new SqlCommand(RetrieveQuery, sqlConnection);
         
         var sqlParameterCollection = query.Parameters;
-        sqlParameterCollection.Add(new SqlParameter("@UserName", userName));
+        sqlParameterCollection.AddWithValue("@UserName", userName);
 
         await sqlConnection.OpenAsync(cancellationToken);
         var result = await query.ExecuteReaderAsync(cancellationToken);
+        var hasRows = await result.ReadAsync(cancellationToken);
+        if (!hasRows)
+        {
+            return null;
+        }
+
+        var encryptedPassword = new byte[16];
+        result.GetBytes(
+            "EncryptedPassword",
+            0L,
+            encryptedPassword,
+            0,
+            encryptedPassword.Length);
+        
+        var salt = new byte[16];
+        result.GetBytes(
+            "Salt",
+            0L,
+            salt,
+            0,
+            salt.Length);
+
         return new SignedUpUser(
-            (string)result["UserName"],
-            (byte[])result["EncryptedPassword"],
-            (byte[])result["Salt"]);
+            result.GetString("UserName"),
+            encryptedPassword,
+            salt);
     }
 }
