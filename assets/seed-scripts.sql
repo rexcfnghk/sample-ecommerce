@@ -5,8 +5,8 @@ CREATE DATABASE SampleECommerceDb
 CREATE TABLE Users (
     Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
     UserName NVARCHAR(50) NOT NULL,
-    EncryptedPassword BINARY(128) NOT NULL,
-    Salt BINARY(16) NOT NULL,
+    EncryptedPassword VARBINARY(128) NOT NULL,
+    Salt VARBINARY(16) NOT NULL,
 
     CONSTRAINT AK_UserNameId UNIQUE(UserName)
 )
