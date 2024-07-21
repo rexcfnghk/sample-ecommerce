@@ -1,4 +1,5 @@
 ﻿using System.Net.Mime;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Models;
@@ -14,6 +15,7 @@ public class UsersController(IUserSignupService userSignupService)
     private readonly IUserSignupService _userSignupService = userSignupService;
 
     [HttpPost]
+    [AllowAnonymous]
     [Consumes(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -25,6 +27,10 @@ public class UsersController(IUserSignupService userSignupService)
 
         await _userSignupService.SignupAsync(request, token);
 
-        return Created();
+         var result = Created();
+         
+         // Have to explicitly set 201 otherwise it would be overridden by HttpNoContentOutputFormatter
+         result.StatusCode = StatusCodes.Status201Created;
+         return result;
     }
 }

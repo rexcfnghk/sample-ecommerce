@@ -1,6 +1,7 @@
 ﻿using System.Security.Claims;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Options;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Serializers;
@@ -27,6 +28,17 @@ public class UserNamePasswordAuthenticationHandler(
     
     protected override async Task<AuthenticateResult> HandleAuthenticateAsync()
     {
+        var endpoint = Context.GetEndpoint();
+        if (endpoint?.Metadata.GetMetadata<IAllowAnonymous>() != null)
+        {
+            var claimsPrincipal =
+                new ClaimsPrincipal(Context.User);
+            var anonymousTicket = new AuthenticationTicket(
+                claimsPrincipal,
+                "Anonymous");
+            return AuthenticateResult.Success(anonymousTicket);
+        }
+        
         var requestDto =
             await _serializer.DeserializeAsync<UserSignupRequestDto>(Request.Body);
         if (requestDto is null)

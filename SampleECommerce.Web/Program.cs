@@ -1,7 +1,9 @@
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using SampleECommerce.Web.AuthenticationHandlers;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Repositories;
+using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
 using SimpleInjector;
 
@@ -18,11 +20,7 @@ serviceCollection.AddControllers(
     {
         options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
     });
-serviceCollection.AddAuthentication()
-    .AddScheme<AuthenticationSchemeOptions,
-        UserNamePasswordAuthenticationHandler>(
-        "UserNamePassword",
-        _ => { });
+AddAuthenticationToServices(serviceCollection);
 
 var container = new Container();
 serviceCollection.AddSimpleInjector(
@@ -31,12 +29,17 @@ serviceCollection.AddSimpleInjector(
     {
         options.AddAspNetCore().AddControllerActivation();
     });
+serviceCollection.AddTransient(
+    _ => container.GetInstance<UserNamePasswordAuthenticationHandler>());
 
+container.Register<UserNamePasswordAuthenticationHandler>();
 container.RegisterSingleton<IUserSignupService, UserSignupService>();
 container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
 container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
 container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
 container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
+container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
+container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
 
 var app = builder.Build();
 
@@ -51,9 +54,9 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-//app.UseAuthentication();
-
 app.MapControllers().WithOpenApi();
+
+app.UseAuthentication();
 
 container.Verify();
 
@@ -70,4 +73,18 @@ string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
     }
 
     return connectionString;
+}
+
+void AddAuthenticationToServices(IServiceCollection serviceCollection1)
+{
+    serviceCollection1.AddAuthentication()
+        .AddScheme<AuthenticationSchemeOptions,
+            UserNamePasswordAuthenticationHandler>(
+            "UserNamePassword",
+            _ => { });
+
+    var authenticationHandlerDescriptor = serviceCollection1.First(
+        s => s.ImplementationType == typeof(UserNamePasswordAuthenticationHandler));
+
+    serviceCollection1.Remove(authenticationHandlerDescriptor);
 }
