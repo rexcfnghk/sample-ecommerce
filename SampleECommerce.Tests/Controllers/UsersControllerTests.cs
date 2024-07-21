@@ -15,7 +15,7 @@ public class UsersControllerTests
     public async Task Signup_ReturnsExpectedJwtToken(
         JwtToken expected,
         [Frozen] IUserSignupService mockUserSignupService,
-        UserSignupRequestDto dto,
+        UserRequestDto dto,
         UsersController sut,
         CancellationToken token)
     {

@@ -40,7 +40,7 @@ public class UserNamePasswordAuthenticationHandler(
         }
         
         var requestDto =
-            await _serializer.DeserializeAsync<UserSignupRequestDto>(Request.Body);
+            await _serializer.DeserializeAsync<UserRequestDto>(Request.Body);
         if (requestDto is null)
         {
             return AuthenticateResult.Fail("Malformed request body for authentication");
@@ -67,7 +67,7 @@ public class UserNamePasswordAuthenticationHandler(
     }
 
     private AuthenticationTicket BuildAuthenticationTicket(
-        UserSignupRequestDto requestDto)
+        UserRequestDto requestDto)
     {
         var claims = new List<Claim>
             { new(ClaimTypes.Name, requestDto.UserName) };
