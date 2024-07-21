@@ -7,15 +7,9 @@ CREATE TABLE Users (
     UserName NVARCHAR(50) NOT NULL,
     EncryptedPassword VARBINARY(128) NOT NULL,
     Salt VARBINARY(16) NOT NULL,
-
-    CONSTRAINT AK_UserNameId UNIQUE(UserName)
-)
-
-CREATE TABLE UserBalances (
-    UserId INT NOT NULL PRIMARY KEY,
     Balance SMALLMONEY NOT NULL DEFAULT (100.00)
 
-    FOREIGN KEY UserId REFERENCES Users(Id)
+    CONSTRAINT AK_UserNameId UNIQUE(UserName)
 )
 
 GO
