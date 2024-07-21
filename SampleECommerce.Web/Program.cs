@@ -1,3 +1,6 @@
+using System.Text;
+using Microsoft.IdentityModel.JsonWebTokens;
+using Microsoft.IdentityModel.Tokens;
 using SampleECommerce.Web.Aes;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
@@ -36,6 +39,10 @@ container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Li
 container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
 container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
+container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
+container.RegisterSingleton<JsonWebTokenHandler>();
+RegisterJwtIssuer();
+RegisterSigningCredentials();
 RegisterAesKey();
 
 var app = builder.Build();
@@ -83,3 +90,35 @@ void RegisterAesKey()
     var bytes = aesKey.Split(',').Select(byte.Parse).ToArray();
     container.RegisterSingleton(() => new AesKey(bytes));
 }
+
+void RegisterJwtIssuer()
+{
+    var issuer = builder.Configuration["Jwt:Issuer"];
+    if (issuer == null)
+    {
+        throw new InvalidOperationException("Cannot retrieve JWT issuer");
+    }
+    
+    container.RegisterSingleton(() => new JwtIssuer(issuer));
+}
+
+void RegisterSigningCredentials()
+{
+    var securityKey = builder.Configuration["Jwt:SecurityKey"];
+    if (securityKey == null)
+    {
+        throw new InvalidOperationException("Cannot retrieve JWT security key");
+    }
+    
+    var algorithm = builder.Configuration["Jwt:Algorithm"];
+    if (algorithm == null)
+    {
+        throw new InvalidOperationException("Cannot retrieve JWT algorithm");
+    }
+
+    container.RegisterSingleton(
+        () => new SigningCredentials(
+            new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
+            algorithm));
+}
+

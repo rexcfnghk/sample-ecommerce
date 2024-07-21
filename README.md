@@ -19,6 +19,9 @@ The solution requires two settings/secrets to run:
 2. A 128-bit AES Key to encrypt passwords generated for users. This can be configured by:
     1. `cd ./SampleECommerce.Web`
     2. `dotnet user-secrets set "Aes:Key" "{your 128-bit AES key}"` (Note that the key is in the format of a comma-separated string, e.g. `1,2,3,4...`)
+3. A security key used to sign JSON Web Tokens used for authentication. Note that the algorithm used (configured in `appsettings.Development.json`, defaults to `HS256`) controls the number of bits required for the security key. The security key can be configured by:
+    1. `cd ./SampleECommerce.Web`
+    2. `dotnet user-secrets set "Jwt:SecurityKey" "{your security key}"`
 
 ## SQL seed scripts
 
