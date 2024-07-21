@@ -1,8 +1,5 @@
 ﻿using System.Net.Mime;
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Services;

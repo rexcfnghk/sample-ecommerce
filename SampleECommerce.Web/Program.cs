@@ -45,6 +45,16 @@ RegisterJwtIssuer();
 RegisterSigningCredentials();
 RegisterAesKey();
 
+serviceCollection.AddAuthentication("Bearer")
+    .AddJwtBearer(
+        opt =>
+        {
+            opt.TokenValidationParameters.ValidateAudience = false;
+            opt.TokenValidationParameters.ValidateIssuer = false;
+            opt.TokenValidationParameters.IssuerSigningKey =
+                container.GetInstance<SigningCredentials>().Key;
+        });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
