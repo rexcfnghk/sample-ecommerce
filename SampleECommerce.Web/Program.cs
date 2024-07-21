@@ -1,7 +1,4 @@
-using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using SampleECommerce.Web.Aes;
-using SampleECommerce.Web.AuthenticationHandlers;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
@@ -22,7 +19,6 @@ serviceCollection.AddControllers(
     {
         options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
     });
-AddAuthenticationToServices(serviceCollection);
 
 var container = new Container();
 serviceCollection.AddSimpleInjector(
@@ -31,10 +27,7 @@ serviceCollection.AddSimpleInjector(
     {
         options.AddAspNetCore().AddControllerActivation();
     });
-serviceCollection.AddTransient(
-    _ => container.GetInstance<UserNamePasswordAuthenticationHandler>());
 
-container.Register<UserNamePasswordAuthenticationHandler>();
 container.RegisterSingleton<IUserSignupService, UserSignupService>();
 container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
 container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
@@ -77,20 +70,6 @@ string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
     }
 
     return connectionString;
-}
-
-void AddAuthenticationToServices(IServiceCollection serviceCollection1)
-{
-    serviceCollection1.AddAuthentication()
-        .AddScheme<AuthenticationSchemeOptions,
-            UserNamePasswordAuthenticationHandler>(
-            "UserNamePassword",
-            _ => { });
-
-    var authenticationHandlerDescriptor = serviceCollection1.First(
-        s => s.ImplementationType == typeof(UserNamePasswordAuthenticationHandler));
-
-    serviceCollection1.Remove(authenticationHandlerDescriptor);
 }
 
 void RegisterAesKey()

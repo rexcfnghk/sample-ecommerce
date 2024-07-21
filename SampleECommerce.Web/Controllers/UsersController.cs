@@ -17,7 +17,7 @@ public class UsersController(IUserSignupService userSignupService)
     [HttpPost]
     [AllowAnonymous]
     [Consumes(MediaTypeNames.Application.Json)]
-    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult> Signup(
         UserRequestDto dto,
@@ -27,10 +27,6 @@ public class UsersController(IUserSignupService userSignupService)
 
         await _userSignupService.SignupAsync(request, token);
 
-         var result = Created();
-         
-         // Have to explicitly set 201 otherwise it would be overridden by HttpNoContentOutputFormatter
-         result.StatusCode = StatusCodes.Status201Created;
-         return result;
+        return NoContent();
     }
 }

@@ -28,6 +28,6 @@ public class UsersControllerTests
         
         var result = await sut.Signup(dto, token);
 
-        Assert.IsType<CreatedResult>(result);
+        Assert.IsType<NoContentResult>(result);
     }
 }
