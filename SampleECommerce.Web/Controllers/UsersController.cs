@@ -1,4 +1,5 @@
-﻿using System.Net.Http.Headers;
+﻿using System.Collections.ObjectModel;
+using System.Net.Http.Headers;
 using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -12,10 +13,11 @@ namespace SampleECommerce.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UsersController(IUserSignupService userSignupService)
+public class UsersController(IUserSignupService userSignupService, IOrderService orderService)
     : ControllerBase
 {
     private readonly IUserSignupService _userSignupService = userSignupService;
+    private readonly IOrderService _orderService = orderService;
 
     [HttpPost]
     [AllowAnonymous]
@@ -32,13 +34,19 @@ public class UsersController(IUserSignupService userSignupService)
 
         return NoContent();
     }
-    
-    [HttpGet("orders")]
+
+    [HttpGet("Orders")]
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> ListOrders(UserIdDto userId)
+    public async Task<ActionResult<IReadOnlyList<OrderDto>>> ListOrders(
+        UserIdDto userId,
+        CancellationToken token = default)
     {
-        return string.Empty;
+        var orders = await _orderService.ListOrdersAsync(userId.UserId, token);
+        var dtos =
+            new ReadOnlyCollection<OrderDto>(
+                orders.Select(o => new OrderDto()).ToList());
+        return dtos;
     }
 }

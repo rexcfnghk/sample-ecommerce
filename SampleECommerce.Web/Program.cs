@@ -45,7 +45,8 @@ container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
 container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
-//container.RegisterSingleton<JsonWebTokenHandler>();
+container.RegisterSingleton<IOrderService, OrderService>();
+container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
 
 RegisterJwtIssuer();
 RegisterSigningCredentials();

@@ -34,9 +34,16 @@ public class UsersControllerTests
     [Theory, AutoNSubstituteData]
     public async Task ListOrders_ReturnsResultFromIOrderService(
         [Frozen] IOrderService mockOrderService,
+        IReadOnlyList<Order> orders,
+        IReadOnlyList<OrderDto> expected,
+        UserIdDto dto,
         UsersController sut,
         CancellationToken token)
     {
-        mockOrderService.ListOrdersAsync()
+        mockOrderService.ListOrdersAsync(dto.UserId, token).Returns(Task.FromResult(orders));
+
+        var result = await sut.ListOrders(dto, token);
+
+        Assert.Equivalent(expected, result.Value);
     }
 }
