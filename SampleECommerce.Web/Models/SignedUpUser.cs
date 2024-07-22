@@ -1,7 +1,9 @@
 ﻿namespace SampleECommerce.Web.Models;
 
-public class SignedUpUser(string userName, byte[] encryptedPassword, byte[] salt) : IEquatable<SignedUpUser>
+public class SignedUpUser(int id, string userName, byte[] encryptedPassword, byte[] salt) : IEquatable<SignedUpUser>
 {
+    public int Id { get; } = id;
+    
     public string UserName { get; } = userName;
 
     public byte[] EncryptedPassword { get; } = encryptedPassword;
@@ -15,12 +17,10 @@ public class SignedUpUser(string userName, byte[] encryptedPassword, byte[] salt
     {
         if (ReferenceEquals(null, other)) return false;
         if (ReferenceEquals(this, other)) return true;
-        return UserName == other.UserName &&
-               EncryptedPassword.SequenceEqual(other.EncryptedPassword) &&
-               Salt.SequenceEqual(other.Salt);
+        return Id == other.Id;
     }
 
-    public override int GetHashCode() => HashCode.Combine(UserName, EncryptedPassword, Salt);
+    public override int GetHashCode() => Id;
 
     public static bool operator ==(SignedUpUser? left, SignedUpUser? right) => Equals(left, right);
 

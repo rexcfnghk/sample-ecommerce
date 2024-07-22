@@ -1,6 +1,7 @@
-﻿using Microsoft.IdentityModel.JsonWebTokens;
+﻿using System.Globalization;
+using System.Security.Claims;
+using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
-using SampleECommerce.Web.Serializers;
 
 namespace SampleECommerce.Web.Jwt;
 
@@ -20,12 +21,19 @@ public class MicrosoftJwtGenerator(
     private readonly JsonWebTokenHandler _jsonWebTokenHandler =
         jsonWebTokenHandler;
 
-    public string Generate(string userName)
+    public string Generate(int userId)
     {
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Issuer = _issuer.Issuer,
-            Audience = userName,
+            Audience = _issuer.Issuer,
+            Subject = new ClaimsIdentity(
+                new[]
+                {
+                    new Claim(
+                        JwtRegisteredClaimNames.Sub,
+                        userId.ToString(CultureInfo.InvariantCulture))
+                }),
             Expires = _expiryCalculator.CalculateExpiry(),
             SigningCredentials = _signingCredentials
         };

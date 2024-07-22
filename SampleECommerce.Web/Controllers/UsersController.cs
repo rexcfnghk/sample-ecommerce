@@ -29,4 +29,13 @@ public class UsersController(IUserSignupService userSignupService)
 
         return NoContent();
     }
+    
+    [HttpGet]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult<string>> ListOrders()
+    {
+        return string.Empty;
+    }
 }

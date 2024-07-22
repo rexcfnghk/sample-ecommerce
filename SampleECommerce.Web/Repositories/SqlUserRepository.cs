@@ -11,7 +11,7 @@ public class SqlUserRepository(string connectionString) : IUserRepository
         "INSERT INTO Users (UserName, EncryptedPassword, Salt) VALUES (@UserName, @EncryptedPassword, @Salt)";
 
     private const string RetrieveQuery =
-        "SELECT UserName, EncryptedPassword, Salt FROM Users WHERE UserName = @UserName";
+        "SELECT Id, UserName, EncryptedPassword, Salt FROM Users WHERE UserName = @UserName";
     
     private readonly string _connectionString = connectionString;
 
@@ -68,6 +68,7 @@ public class SqlUserRepository(string connectionString) : IUserRepository
             salt.Length);
 
         return new SignedUpUser(
+            result.GetInt32("Id"),
             result.GetString("UserName"),
             encryptedPassword,
             salt);

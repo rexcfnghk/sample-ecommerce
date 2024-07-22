@@ -45,7 +45,7 @@ public class SessionsController(
             return Unauthorized("Incorrect password");
         }
         
-        var jwt = _jwtGenerator.Generate(dto.UserName);
+        var jwt = _jwtGenerator.Generate(signedUpUser.Id);
         return new JwtTokenDto(jwt);
     }
 }

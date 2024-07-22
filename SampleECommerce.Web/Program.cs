@@ -41,6 +41,7 @@ container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<JsonWebTokenHandler>();
+
 RegisterJwtIssuer();
 RegisterSigningCredentials();
 RegisterAesKey();
@@ -49,8 +50,14 @@ serviceCollection.AddAuthentication("Bearer")
     .AddJwtBearer(
         opt =>
         {
-            opt.TokenValidationParameters.ValidateAudience = false;
-            opt.TokenValidationParameters.ValidateIssuer = false;
+            // Prevent .NET from replacing 'sub' claim into some other formats
+            JsonWebTokenHandler.DefaultInboundClaimTypeMap.Clear();
+            opt.MapInboundClaims = false;
+            
+            opt.TokenValidationParameters.ValidAudience =
+                container.GetInstance<JwtIssuer>().Issuer;
+            opt.TokenValidationParameters.ValidIssuer =
+                container.GetInstance<JwtIssuer>().Issuer;
             opt.TokenValidationParameters.IssuerSigningKey =
                 container.GetInstance<SigningCredentials>().Key;
         });
@@ -131,4 +138,3 @@ void RegisterSigningCredentials()
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
             algorithm));
 }
-

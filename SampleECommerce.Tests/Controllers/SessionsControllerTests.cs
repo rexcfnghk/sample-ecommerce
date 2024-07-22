@@ -38,7 +38,7 @@ public class SessionsControllerTests
             .Encrypt(userRequestDto.Password, signedUpUser.Salt)
             .Returns(signedUpUser.EncryptedPassword);
         
-        jwtGenerator.Generate(userRequestDto.UserName).Returns(expected);
+        jwtGenerator.Generate(signedUpUser.Id).Returns(expected);
 
         // Act
         var actionResult = await sut.CreateSession(userRequestDto, token);
