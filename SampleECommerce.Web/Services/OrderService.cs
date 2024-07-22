@@ -8,6 +8,6 @@ public class OrderService(IOrderRepository orderRepository) : IOrderService
 
     public Task<IReadOnlyList<Order>> ListOrdersAsync(int userId, CancellationToken token = default)
     {
-        return _orderRepository.GetOrdersAsync(userId, token);
+        return _orderRepository.GetOrderItemsAsync(userId, token);
     }
 }

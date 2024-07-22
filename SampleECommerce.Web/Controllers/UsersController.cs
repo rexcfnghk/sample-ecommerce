@@ -39,14 +39,26 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<IReadOnlyList<OrderDto>>> ListOrders(
+    public async Task<ActionResult<IDictionary<Guid, OrderDto>>> ListOrders(
         UserIdDto userId,
         CancellationToken token = default)
     {
         var orders = await _orderService.ListOrdersAsync(userId.UserId, token);
-        var dtos =
-            new ReadOnlyCollection<OrderDto>(
-                orders.Select(o => new OrderDto()).ToList());
-        return dtos;
+
+        var output = orders.ToDictionary(
+            dto => dto.Id,
+            dto => new OrderDto
+            {
+                OrderTime = dto.OrderTime,
+                OrderItems = dto.OrderItems.Select(
+                        oi => new OrderItemDto
+                        {
+                            OrderItemId = oi.Id, ProductName = oi.ProductName,
+                            Quantity = oi.Quantity
+                        })
+                    .ToList()
+            });
+
+        return output;
     }
 }
