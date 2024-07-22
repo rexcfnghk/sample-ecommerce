@@ -30,4 +30,13 @@ public class UsersControllerTests
 
         Assert.IsType<NoContentResult>(result);
     }
+
+    [Theory, AutoNSubstituteData]
+    public async Task ListOrders_ReturnsResultFromIOrderService(
+        [Frozen] IOrderService mockOrderService,
+        UsersController sut,
+        CancellationToken token)
+    {
+        mockOrderService.ListOrdersAsync()
+    }
 }

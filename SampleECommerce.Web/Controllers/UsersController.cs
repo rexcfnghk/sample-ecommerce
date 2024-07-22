@@ -1,7 +1,10 @@
-﻿using System.Net.Mime;
+﻿using System.Net.Http.Headers;
+using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SampleECommerce.Web.Dtos;
+using SampleECommerce.Web.ModelBinders;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 
@@ -30,11 +33,11 @@ public class UsersController(IUserSignupService userSignupService)
         return NoContent();
     }
     
-    [HttpGet]
+    [HttpGet("orders")]
     [Authorize(AuthenticationSchemes = "Bearer")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<ActionResult<string>> ListOrders()
+    public async Task<ActionResult<string>> ListOrders(UserIdDto userId)
     {
         return string.Empty;
     }

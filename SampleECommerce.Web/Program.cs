@@ -7,6 +7,7 @@ using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
+using SampleECommerce.Web.ValueProviders;
 using SimpleInjector;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -17,11 +18,15 @@ var serviceCollection = builder.Services;
 
 serviceCollection.AddEndpointsApiExplorer();
 serviceCollection.AddSwaggerGen();
+
 serviceCollection.AddControllers(
     options =>
     {
+        options.ValueProviderFactories.Insert(0, new JwtSubjectValueProviderFactory());
         options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
     });
+
+serviceCollection.AddSingleton<JsonWebTokenHandler>();
 
 var container = new Container();
 serviceCollection.AddSimpleInjector(
@@ -40,7 +45,7 @@ container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
 container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
-container.RegisterSingleton<JsonWebTokenHandler>();
+//container.RegisterSingleton<JsonWebTokenHandler>();
 
 RegisterJwtIssuer();
 RegisterSigningCredentials();
