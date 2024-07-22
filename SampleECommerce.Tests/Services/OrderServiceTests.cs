@@ -17,14 +17,13 @@ public class OrderServiceTests
     [Theory, AutoNSubstituteData]
     public async Task ListOrderAsync_ReturnsExpectedGrouping(
         int userId,
-        IReadOnlyList<OrderItem> orders,
+        IReadOnlyList<Order> expected,
         [Frozen] IOrderRepository mockOrderRepository,
         OrderService sut,
         CancellationToken token)
     {
         mockOrderRepository.GetOrderItemsAsync(userId, token)
-            .Returns(Task.FromResult(orders));
-        var expected = from order in orders group order by order.Id;
+            .Returns(Task.FromResult(expected));
 
         var actual = await sut.ListOrdersAsync(userId, token);
         

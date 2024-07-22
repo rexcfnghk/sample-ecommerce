@@ -34,17 +34,28 @@ public class UsersControllerTests
     [Theory, AutoNSubstituteData]
     public async Task ListOrders_ReturnsResultFromIOrderService(
         [Frozen] IOrderService mockOrderService,
-        IEnumerable<OrderItem> orders,
-        IReadOnlyList<IGrouping<Guid, OrderDto>> expected,
+        IReadOnlyList<Order> orders,
         UserIdDto dto,
         UsersController sut,
         CancellationToken token)
     {
-        var groupedOrders = from order in orders group order by order.Id;
-        mockOrderService.ListOrdersAsync(dto.UserId, token).Returns(Task.FromResult(groupedOrders));
+        mockOrderService.ListOrdersAsync(dto.UserId, token).Returns(Task.FromResult(orders));
+        var expected = orders.ToDictionary(
+            o => o.Id,
+            o => new OrderDto
+            {
+                OrderTime = o.OrderTime,
+                OrderItems = o.OrderItems.Select(
+                        oi => new OrderItemDto
+                        {
+                            OrderItemId = oi.Id, ProductName = oi.ProductName,
+                            Quantity = oi.Quantity
+                        })
+                    .ToList()
+            });
 
         var result = await sut.ListOrders(dto, token);
 
-        Assert.Equivalent(expected, result);
+        Assert.Equivalent(expected, result.Value);
     }
 }
