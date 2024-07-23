@@ -86,7 +86,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
         var orderItems =
             from orderItem in postOrderDto.OrderItems
             from product in products
-            where orderItem.ProductId == product.Id
+            where orderItem.ProductId == product.Id && orderItem.Quantity > 0
             select new OrderItem(product, orderItem.Quantity.Value);
 
         var orderItemList = orderItems.ToList();

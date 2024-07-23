@@ -23,6 +23,7 @@ serviceCollection.AddControllers(
     options =>
     {
         options.ValueProviderFactories.Insert(0, new JwtSubjectValueProviderFactory());
+        options.Filters.Add<HandleOrderExceptionFilter>();
         options.Filters.Add<HandleDuplicateUserNameExceptionFilter>();
     });
 
@@ -47,6 +48,7 @@ container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<IOrderService, OrderService>();
 container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
+container.RegisterDecorator<IOrderRepository, CatchContraintViolationOrderRepository>(Lifestyle.Singleton);
 container.RegisterSingleton<IProductService, ProductService>();
 container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
 

@@ -147,7 +147,7 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
 
             await transaction.CommitAsync(token);
         }
-        catch (SqlException e)
+        catch (SqlException)
         {
             try
             {
@@ -157,8 +157,8 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
             {
                 throw new InvalidOperationException("Rollback failed", inner);
             }
-            
-            throw new OrderException("Order failed", e);
+
+            throw;
         }
     }
 }
