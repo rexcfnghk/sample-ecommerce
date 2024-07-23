@@ -10,6 +10,7 @@ CREATE TABLE Users (
     Balance SMALLMONEY NOT NULL DEFAULT (100.00)
 
     CONSTRAINT AK_Users_UserNameId UNIQUE(UserName)
+    CONSTRAINT AK_Users_Balance CHECK (Balance >= 0)
 )
 
 CREATE TABLE Products(

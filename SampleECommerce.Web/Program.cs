@@ -47,6 +47,8 @@ container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<IOrderService, OrderService>();
 container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
+container.RegisterSingleton<IProductService, ProductService>();
+container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
 
 RegisterJwtIssuer();
 RegisterSigningCredentials();

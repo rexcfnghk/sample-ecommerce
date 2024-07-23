@@ -22,8 +22,9 @@ public class SqlUserRepository(string connectionString) : IUserRepository
         CancellationToken cancellationToken = default)
     {
         await using var sqlConnection = new SqlConnection(_connectionString);
-        await using var command = new SqlCommand(InsertCommand, sqlConnection);
-        
+        await using var command = sqlConnection.CreateCommand();
+
+        command.CommandText = InsertCommand;
         var sqlParameterCollection = command.Parameters;
         sqlParameterCollection.AddWithValue("@UserName", userName);
         sqlParameterCollection.AddWithValue("@EncryptedPassword", encryptedPassword);

@@ -17,5 +17,7 @@ public class Order
     public Guid Id { get; }
     public DateTimeOffset OrderTime { get; }
     public IReadOnlyList<OrderItem> OrderItems { get; }
-    
+
+    public decimal OrderSum => OrderItems.Sum(oi => oi.Quantity * oi.Product.Price);
+
 }
