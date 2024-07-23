@@ -1,4 +1,4 @@
-# Sample eCommerce System
+# Sample eCommerce System ![CI Build](https://github.com/rexcfnghk/sample-ecommerce/actions/workflows/dotnet.yml/badge.svg)
 
 This is a simple backend system written in C# to simulate an eCommerce system.
 
@@ -38,8 +38,9 @@ TBD
 
 ## Limitations
 
-1. The secret store used is only for development purpose. A more robust key vault should be used in production scenarios.
-2. The LocalDB used is only for development purpose. A proper version of Microsoft SQL Server should be used in production scenarios.
-3. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
-4. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
-5. The JWT authentication is currently configured to not validate the `issuer` nor the `audience`. This might be vulnerable to a [forwarding attack](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.tokenvalidationparameters.validateissuer?view=msal-web-dotnet-latest).
+1. The rows in the [Product] table are assumed to be immutable, i.e. Changes to products after users made an order are not propagated.
+2. The secret store used is only for development purpose. A more robust key vault should be used in production scenarios.
+3. The LocalDB used is only for development purpose. A proper version of Microsoft SQL Server should be used in production scenarios.
+4. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
+5. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
+6. The JWT authentication is currently configured to not validate the `issuer` nor the `audience`. This might be vulnerable to a [forwarding attack](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.tokenvalidationparameters.validateissuer?view=msal-web-dotnet-latest).
