@@ -9,7 +9,9 @@ namespace SampleECommerce.Web.Repositories;
 public class SqlOrderRepository(string connectionString) : IOrderRepository
 {
     private const string ProductQuery =
-        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, p.Name as ProductName, p.Quantity as ProductQuantity, p.Price as ProductPrice, oi.Quantity as OrderQuantity, o.OrderTime " +
+        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, " + 
+            "p.Name as ProductName, p.Quantity as ProductQuantity, p.Price as ProductPrice, p.Category as ProductCategory, " +
+            "oi.Quantity as OrderQuantity, o.OrderTime " +
         "FROM OrderItems oi INNER JOIN dbo.Products p on p.Id = oi.ProductId INNER JOIN Orders o on oi.OrderId = o.Id " +
         "WHERE o.UserId = @UserId";
     
@@ -36,6 +38,7 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
                 dataReader.GetString("ProductName"),
                 dataReader.GetInt32("ProductQuantity"),
                 dataReader.GetDecimal("ProductPrice"),
+                dataReader.GetString("ProductCategory"),
                 dataReader.GetInt32("OrderQuantity"),
                 dataReader.GetDateTimeOffset(dataReader.GetOrdinal("OrderTime")));
             
@@ -56,7 +59,8 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
                                 oi.ProductId,
                                 oi.ProductName,
                                 oi.ProductQuantity,
-                                oi.ProductPrice),
+                                oi.ProductPrice,
+                                oi.ProductCategory),
                             oi.OrderQuantity))
                     .ToList());
 

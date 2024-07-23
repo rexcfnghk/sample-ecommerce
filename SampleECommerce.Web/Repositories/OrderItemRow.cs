@@ -7,5 +7,6 @@ public record OrderItemRow(
     string ProductName,
     int ProductQuantity,
     decimal ProductPrice,
+    string ProductCategory,
     int OrderQuantity,
     DateTimeOffset OrderTime);

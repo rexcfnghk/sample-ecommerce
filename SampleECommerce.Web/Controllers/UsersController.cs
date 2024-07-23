@@ -54,7 +54,9 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
                         oi => new OrderItemDto
                         {
                             ProductName = oi.Product.Name,
-                            Quantity = oi.Quantity
+                            Quantity = oi.Quantity,
+                            ProductCategory = oi.Product.Category,
+                            ProductPrice = oi.Product.Price
                         })
                     .ToList()
             });
