@@ -1,0 +1,6 @@
+﻿services:
+  sampleecommerce.web:
+    image: sampleecommerce.web
+    build:
+      context: .
+      dockerfile: SampleECommerce.Web/Dockerfile
