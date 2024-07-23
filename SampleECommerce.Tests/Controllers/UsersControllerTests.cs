@@ -48,7 +48,7 @@ public class UsersControllerTests
                 OrderItems = o.OrderItems.Select(
                         oi => new OrderItemDto
                         {
-                            OrderItemId = oi.Id, ProductName = oi.ProductName,
+                            ProductName = oi.Product.Name,
                             Quantity = oi.Quantity
                         })
                     .ToList()

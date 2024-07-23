@@ -53,12 +53,26 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
                 OrderItems = dto.OrderItems.Select(
                         oi => new OrderItemDto
                         {
-                            OrderItemId = oi.Id, ProductName = oi.ProductName,
+                            ProductName = oi.Product.Name,
                             Quantity = oi.Quantity
                         })
                     .ToList()
             });
 
         return output;
+    }
+
+    [HttpPost("Orders")]
+    [Authorize(AuthenticationSchemes = "Bearer")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<ActionResult> PostOrder(
+        UserIdDto userId,
+        PostOrderDto postOrderDto)
+    {
+        // Retrieve product from productId?
+        // Then map to order model
+        // Then try save to db
+        return null;
     }
 }

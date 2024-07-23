@@ -9,7 +9,7 @@ namespace SampleECommerce.Web.Repositories;
 public class SqlOrderRepository(string connectionString) : IOrderRepository
 {
     private const string ProductQuery =
-        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Name, oi.Quantity, o.OrderTime " +
+        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, p.Name as ProductName, p.Quantity as ProductQuantity, p.Price as ProductPrice, oi.Quantity as OrderQuantity, o.OrderTime " +
         "FROM OrderItems oi INNER JOIN dbo.Products p on p.Id = oi.ProductId INNER JOIN Orders o on oi.OrderId = o.Id " +
         "WHERE o.UserId = @UserId";
     
@@ -26,14 +26,17 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
         await sqlConnection.OpenAsync(token);
         var dataReader = await query.ExecuteReaderAsync(token);
 
-        var orderItems = new List<OrderItem>();
+        var orderItems = new List<OrderItemRow>();
         while (await dataReader.ReadAsync(token))
         {
-            var orderItem = new OrderItem(
+            var orderItem = new OrderItemRow(
                 dataReader.GetGuid("OrderItemId"),
                 dataReader.GetGuid("OrderId"),
-                dataReader.GetString("Name"),
-                dataReader.GetInt32("Quantity"),
+                dataReader.GetString("ProductId"),
+                dataReader.GetString("ProductName"),
+                dataReader.GetInt32("ProductQuantity"),
+                dataReader.GetDecimal("ProductPrice"),
+                dataReader.GetInt32("OrderQuantity"),
                 dataReader.GetDateTimeOffset(dataReader.GetOrdinal("OrderTime")));
             
             orderItems.Add(orderItem);
@@ -44,7 +47,18 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
             o => o);
 
         var orders = from x in orderLookup
-            select new Order(x.Key.OrderId, x.Key.OrderTime, x.ToList());
+            select new Order(
+                x.Key.OrderId,
+                x.Key.OrderTime,
+                x.Select(
+                        oi => new OrderItem(
+                            new Product(
+                                oi.ProductId,
+                                oi.ProductName,
+                                oi.ProductQuantity,
+                                oi.ProductPrice),
+                            oi.OrderQuantity))
+                    .ToList());
 
         return orders.ToList();
     }

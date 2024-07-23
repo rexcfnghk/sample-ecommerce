@@ -1,8 +1,16 @@
 ﻿namespace SampleECommerce.Web.Models;
 
-public record OrderItem(
-    Guid Id,
-    Guid OrderId,
-    string ProductName,
-    int Quantity,
-    DateTimeOffset OrderTime);
+public class OrderItem
+{
+    public OrderItem(Product product, int quantity)
+    {
+        ArgumentNullException.ThrowIfNull(product, nameof(product));
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(quantity, nameof(quantity));
+        
+        Product = product;
+        Quantity = quantity;
+    }
+
+    public Product Product { get; }
+    public int Quantity { get; }
+}

@@ -1,3 +1,21 @@
-﻿namespace SampleECommerce.Web.Models;
+﻿using Microsoft.AspNetCore.Routing.Matching;
+using SampleECommerce.Web.Repositories;
 
-public record Order(Guid Id, DateTimeOffset OrderTime, IReadOnlyList<OrderItem> OrderItems);
+namespace SampleECommerce.Web.Models;
+
+public class Order
+{
+    public Order(Guid id, DateTimeOffset orderTime, IReadOnlyList<OrderItem> orderItems)
+    {
+        ArgumentOutOfRangeException.ThrowIfZero(orderItems.Count, nameof(orderItems.Count));
+        
+        Id = id;
+        OrderTime = orderTime;
+        OrderItems = orderItems;
+    }
+
+    public Guid Id { get; }
+    public DateTimeOffset OrderTime { get; }
+    public IReadOnlyList<OrderItem> OrderItems { get; }
+    
+}
