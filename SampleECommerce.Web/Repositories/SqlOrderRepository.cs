@@ -1,5 +1,6 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
+using SampleECommerce.Web.Exceptions;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 
@@ -8,9 +9,9 @@ namespace SampleECommerce.Web.Repositories;
 public class SqlOrderRepository(string connectionString) : IOrderRepository
 {
     private const string OrderQuery =
-        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, " + 
-            "p.Name as ProductName, p.Quantity as ProductQuantity, p.Price as ProductPrice, p.Category as ProductCategory, " +
-            "oi.Quantity as OrderQuantity, o.OrderTime " +
+        "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, " +
+        "p.Name as ProductName, p.Quantity as ProductQuantity, p.Price as ProductPrice, p.Category as ProductCategory, " +
+        "oi.Quantity as OrderQuantity, o.OrderTime " +
         "FROM OrderItems oi INNER JOIN dbo.Products p on p.Id = oi.ProductId INNER JOIN Orders o on oi.OrderId = o.Id " +
         "WHERE o.UserId = @UserId";
 
@@ -25,19 +26,21 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
 
     private const string InsertOrderItemCommand =
         "INSERT INTO OrderItems (OrderId, ProductId, Quantity) VALUES (@OrderId, @ProductId, @Quantity)";
-    
+
     private readonly string _connectionString = connectionString;
 
-    public async Task<IReadOnlyList<Order>> GetOrderItemsAsync(int userId, CancellationToken token = default)
+    public async Task<IReadOnlyList<Order>> GetOrderItemsAsync(
+        int userId,
+        CancellationToken token = default)
     {
         await using var sqlConnection = new SqlConnection(_connectionString);
         await using var query = sqlConnection.CreateCommand();
-        
+
         query.CommandText = OrderQuery;
-        
+
         var sqlParameterCollection = query.Parameters;
         sqlParameterCollection.AddWithValue("@UserId", userId);
-        
+
         await sqlConnection.OpenAsync(token);
 
         var dataReader = await query.ExecuteReaderAsync(token);
@@ -54,8 +57,9 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
                 dataReader.GetDecimal("ProductPrice"),
                 dataReader.GetString("ProductCategory"),
                 dataReader.GetInt32("OrderQuantity"),
-                dataReader.GetDateTimeOffset(dataReader.GetOrdinal("OrderTime")));
-            
+                dataReader.GetDateTimeOffset(
+                    dataReader.GetOrdinal("OrderTime")));
+
             orderItems.Add(orderItem);
         }
 
@@ -81,60 +85,69 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
         return orders.ToList();
     }
 
-    public async Task PostOrderAsync(int userId, Order order, CancellationToken token = default)
+    public async Task PostOrderAsync(
+        int userId,
+        Order order,
+        CancellationToken token = default)
     {
         await using var sqlConnection = new SqlConnection(_connectionString);
-        
+
         await sqlConnection.OpenAsync(token);
-        
+
         await using var command = sqlConnection.CreateCommand();
-        
-        var transaction = (SqlTransaction)await sqlConnection.BeginTransactionAsync(token);
-
-        command.CommandText = InsertOrderCommand;
-        command.Transaction = transaction;
-        command.Parameters.AddWithValue("@Id", order.Id);
-        command.Parameters.AddWithValue("@UserId", userId);
-        command.Parameters.AddWithValue("@OrderTime", order.OrderTime);
-
-        await command.ExecuteNonQueryAsync(token);
-
-        command.Parameters.Clear();
-        command.CommandText = UpdateBalanceCommand;
-        
-        command.Parameters.AddWithValue("@UserId", userId);
-        command.Parameters.AddWithValue("@OrderTotal", order.OrderSum);
-        
-        await command.ExecuteNonQueryAsync(token);
-
-        foreach (var orderItem in order.OrderItems)
-        {
-            command.Parameters.Clear();
-            command.CommandText = UpdateProductCommand;
-
-            command.Parameters.AddWithValue("@ProductId", orderItem.Product.Id);
-            command.Parameters.AddWithValue(
-                "@OrderQuantity",
-                orderItem.Quantity);
-
-            await command.ExecuteNonQueryAsync(token);
-            
-            command.Parameters.Clear();
-            command.CommandText = InsertOrderItemCommand;
-
-            command.Parameters.AddWithValue("@OrderId", order.Id);
-            command.Parameters.AddWithValue("@ProductId", orderItem.Product.Id);
-            command.Parameters.AddWithValue("@Quantity", orderItem.Quantity);
-            
-            await command.ExecuteNonQueryAsync(token);
-
-        }
-
+        var transaction =
+            (SqlTransaction)await sqlConnection
+                .BeginTransactionAsync(token);
         try
         {
+            command.CommandText = InsertOrderCommand;
+            command.Transaction = transaction;
+            command.Parameters.AddWithValue("@Id", order.Id);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@OrderTime", order.OrderTime);
+
+            await command.ExecuteNonQueryAsync(token);
+
+            command.Parameters.Clear();
+            command.CommandText = UpdateBalanceCommand;
+
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@OrderTotal", order.OrderSum);
+
+            await command.ExecuteNonQueryAsync(token);
+
+            foreach (var orderItem in order.OrderItems)
+            {
+                command.Parameters.Clear();
+                command.CommandText = UpdateProductCommand;
+
+                command.Parameters.AddWithValue(
+                    "@ProductId",
+                    orderItem.Product.Id);
+                command.Parameters.AddWithValue(
+                    "@OrderQuantity",
+                    orderItem.Quantity);
+
+                await command.ExecuteNonQueryAsync(token);
+
+                command.Parameters.Clear();
+                command.CommandText = InsertOrderItemCommand;
+
+                command.Parameters.AddWithValue("@OrderId", order.Id);
+                command.Parameters.AddWithValue(
+                    "@ProductId",
+                    orderItem.Product.Id);
+                command.Parameters.AddWithValue(
+                    "@Quantity",
+                    orderItem.Quantity);
+
+                await command.ExecuteNonQueryAsync(token);
+            }
+
+
             await transaction.CommitAsync(token);
         }
-        catch (Exception)
+        catch (SqlException e)
         {
             try
             {
@@ -144,7 +157,8 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
             {
                 throw new InvalidOperationException("Rollback failed", inner);
             }
+            
+            throw new OrderException("Order failed", e);
         }
-
     }
 }
