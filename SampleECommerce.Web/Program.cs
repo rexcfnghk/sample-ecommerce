@@ -1,4 +1,7 @@
 using System.Text;
+using Microsoft.AspNetCore.DataProtection;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
+using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using SampleECommerce.Web.Aes;
@@ -15,6 +18,19 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 var serviceCollection = builder.Services;
+
+// Docker-specific setup
+builder.Configuration.AddKeyPerFile(
+    directoryPath: "/run/secrets",
+    optional: true);
+
+builder.Services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo("/protection-keys"))
+    .UseCryptographicAlgorithms(new AuthenticatedEncryptorConfiguration
+    {
+        EncryptionAlgorithm = EncryptionAlgorithm.AES_256_CBC,
+        ValidationAlgorithm = ValidationAlgorithm.HMACSHA256
+    });
 
 serviceCollection.AddEndpointsApiExplorer();
 serviceCollection.AddSwaggerGen();
@@ -96,7 +112,7 @@ return;
 
 string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
 {
-    var connectionString = webApplicationBuilder.Configuration.GetConnectionString("Default");
+    var connectionString = webApplicationBuilder.Configuration.GetConnectionString(webApplicationBuilder.Environment.EnvironmentName);
     if (connectionString == null)
     {
         throw new InvalidOperationException(

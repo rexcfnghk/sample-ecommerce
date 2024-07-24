@@ -1,0 +1,21 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  sampleecommerce.web:
+    build:
+      context: "C:\\Users\\rexcf\\source\\SampleECommerce"
+      dockerfile: "SampleECommerce.Web/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/SampleECommerce.Web.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "sampleecommerce.web:dev"
+    ports: []
+    volumes:
+    - "C:\\Users\\rexcf\\AppData\\Roaming\\Microsoft\\UserSecrets:/home/app/.microsoft/usersecrets"
+    - "C:\\Users\\rexcf\\.nuget\\packages:/home/app/.nuget/packages"
+    - "C:\\Users\\rexcf\\source\\SampleECommerce\\SampleECommerce.Web:/app:rw"
+    - "C:\\Users\\rexcf\\source\\SampleECommerce:/src:rw"
+    working_dir: "/app"

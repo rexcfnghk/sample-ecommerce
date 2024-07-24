@@ -431,3 +431,7 @@ _UpgradeReport_Files/
 Thumbs.db
 Desktop.ini
 .DS_Store
+
+sql_sa_password.txt
+jwt_securitykey.txt
+aes_key.txt

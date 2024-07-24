@@ -1,6 +1,37 @@
 ﻿services:
   sampleecommerce.web:
     image: sampleecommerce.web
+    ports:
+      - "8080:8080"
     build:
       context: .
       dockerfile: SampleECommerce.Web/Dockerfile
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      Aes__Key: /run/secrets/Aes__Key
+      Jwt__SecurityKey: /run/secrets/Jwt__SecurityKey
+    secrets:
+      - Aes__Key
+      - Jwt__SecurityKey
+    volumes:
+      - ~/.aspnet/protection-keys:/protection-keys
+  sampleecommerce.db:
+    depends_on:
+      - sampleecommerce.web
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    ports:
+      - "1433:1433"
+    secrets:
+      - sql_sa_password
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD_FILE : /run/secrets/sql_sa_password
+secrets:
+  sql_sa_password:
+    file: sql_sa_password.txt
+  Aes__Key:
+    file: aes_key.txt
+  Jwt__SecurityKey:
+    file: jwt_securitykey.txt
+
+
