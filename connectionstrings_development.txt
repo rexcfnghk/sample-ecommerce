@@ -1,1 +1,1 @@
-Server=host.docker.internal,1433;Database=SampleECommerceDb;TrustServerCertificate=true;Trusted_Connection=false;User Id=SA;Password=pBR9HLpVAa!6Uz74eD@q*4btgGBBj_;
+Server=host.docker.internal,1433;Database=SampleECommerceDb;TrustServerCertificate=true;Trusted_Connection=false;User Id=SA;Password=D2bDGPXDL3YaZqTtzGbqVB9E6VPQ7M;

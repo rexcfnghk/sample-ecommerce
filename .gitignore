@@ -435,3 +435,4 @@ Desktop.ini
 sql_sa_password.txt
 jwt_securitykey.txt
 aes_key.txt
+connectionstrings_*.txt
