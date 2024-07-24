@@ -1,5 +1,7 @@
 ﻿services:
   sampleecommerce.web:
+    depends_on:
+      - sampleecommerce.db
     image: sampleecommerce.web
     ports:
       - "8080:8080"
@@ -10,14 +12,14 @@
       ASPNETCORE_ENVIRONMENT: "Development"
       Aes__Key: /run/secrets/Aes__Key
       Jwt__SecurityKey: /run/secrets/Jwt__SecurityKey
+      ConnectionStrings__Development: /run/secrets/ConnectionStrings__Development
     secrets:
       - Aes__Key
       - Jwt__SecurityKey
+      - ConnectionStrings__Development
     volumes:
       - ~/.aspnet/protection-keys:/protection-keys
   sampleecommerce.db:
-    depends_on:
-      - sampleecommerce.web
     image: mcr.microsoft.com/mssql/server:2022-latest
     ports:
       - "1433:1433"
@@ -26,6 +28,9 @@
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD_FILE : /run/secrets/sql_sa_password
+    volumes:
+      - ./assets:/assets:ro
+    entrypoint: /assets/entrypoint.sh
 secrets:
   sql_sa_password:
     file: sql_sa_password.txt
@@ -33,5 +38,7 @@ secrets:
     file: aes_key.txt
   Jwt__SecurityKey:
     file: jwt_securitykey.txt
+  ConnectionStrings__Development:
+    file: connectionstrings_development.txt
 
 

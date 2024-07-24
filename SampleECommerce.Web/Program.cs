@@ -118,7 +118,7 @@ string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
         throw new InvalidOperationException(
             "Cannot retrieve connection string");
     }
-
+    Console.WriteLine(connectionString);
     return connectionString;
 }
 
