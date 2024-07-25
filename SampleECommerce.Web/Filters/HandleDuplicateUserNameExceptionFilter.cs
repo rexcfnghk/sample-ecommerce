@@ -16,6 +16,6 @@ public class HandleDuplicateUserNameExceptionFilter : IExceptionFilter
         }
 
         context.Result =
-            new BadRequestObjectResult($"The username '{ex.DuplicateUserName}' is already taken.");
+            new BadRequestObjectResult(new { Message = $"The username '{ex.DuplicateUserName}' is already taken." });
     }
 }

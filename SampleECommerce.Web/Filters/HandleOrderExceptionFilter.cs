@@ -20,15 +20,15 @@ public class HandleOrderExceptionFilter : IExceptionFilter
         {
             case OrderErrorType.OrderItemQuantityEqualToOrLessThanZero:
                 context.Result = new BadRequestObjectResult(
-                    "One of the order items has an order quantity equal to less than zero");
+                    new { Message = "One of the order items has an order quantity equal to less than zero" });
                 return;
             case OrderErrorType.ProductQuantityLessThanOrderQuantity:
                 context.Result = new BadRequestObjectResult(
-                    "One of the order items has been over-ordered");
+                    new { Message = "One of the order items has been over-ordered" });
                 return;
             case OrderErrorType.UserBalanceLessThanSumOfOrder:
                 context.Result =
-                    new BadRequestObjectResult("User balance is insufficient");
+                    new BadRequestObjectResult(new { Message = "User balance is insufficient" });
                 return;
             case OrderErrorType.None:
             default:

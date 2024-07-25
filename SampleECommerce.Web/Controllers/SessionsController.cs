@@ -8,6 +8,7 @@ namespace SampleECommerce.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Produces(MediaTypeNames.Application.Json)]
 public class SessionsController(
     IUserRepository userRepository, 
     IPasswordEncryptionService passwordEncryptionService,
@@ -24,7 +25,7 @@ public class SessionsController(
     [Produces(MediaTypeNames.Application.Json)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
     public async Task<ActionResult<JwtTokenDto>> CreateSession(
         UserRequestDto dto,
         CancellationToken token = default)

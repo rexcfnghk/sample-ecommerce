@@ -8,11 +8,13 @@ using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.ModelBinders;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
+using SampleECommerce.Web.Swashbuckle;
 
 namespace SampleECommerce.Web.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[Produces(MediaTypeNames.Application.Json)]
 public class UsersController(IUserSignupService userSignupService, IOrderService orderService, IProductService productService)
     : ControllerBase
 {
@@ -41,7 +43,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<IDictionary<Guid, OrderDto>>> ListOrders(
-        UserIdDto userId,
+        [OpenApiParameterIgnore] UserIdDto userId,
         CancellationToken token = default)
     {
         var orders = await _orderService.ListOrdersAsync(userId.UserId, token);
@@ -70,7 +72,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<ActionResult<OrderSuccessfulDto>> PostOrder(
-        UserIdDto userId,
+        [OpenApiParameterIgnore] UserIdDto userId,
         PostOrderDto postOrderDto,
         CancellationToken token = default)
     {

@@ -4,12 +4,14 @@ using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
 using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using SampleECommerce.Web.Aes;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
+using SampleECommerce.Web.Swashbuckle;
 using SampleECommerce.Web.ValueProviders;
 using SimpleInjector;
 
@@ -33,7 +35,21 @@ builder.Services.AddDataProtection()
     });
 
 serviceCollection.AddEndpointsApiExplorer();
-serviceCollection.AddSwaggerGen();
+serviceCollection.AddSwaggerGen(
+    c =>
+    {
+        c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.ApiKey,
+            Scheme = "Bearer"
+        });
+        
+        c.OperationFilter<OpenApiParameterIgnoreFilter>();
+        c.OperationFilter<SecurityRequirementsOperationFilter>();
+    });
 
 serviceCollection.AddControllers(
     options =>

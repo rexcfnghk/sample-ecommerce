@@ -30,7 +30,7 @@ The solution requires a few settings/secrets to run:
 
 ### Running in Docker
 
-Since secrets are passed as [Docker secrets](https://docs.docker.com/engine/swarm/secrets/), you are required to provide the 3 values above via a file mechanism:
+Since secrets are passed as [Docker secrets](https://docs.docker.com/engine/swarm/secrets/), you are required to provide the above 3 secrets and 1 additional secret above via a file mechanism:
 
 1. (This corresponds the point 1 in Running Locally) You should provide a text file named `connectionstrings_development.txt` under `./` with your connection string to Microsoft SQL Server 2022 docker image, as specified in the `docker-compose.yml`.
 2. (This corresponds the point 2 in Running Locally) You should provide a text file named `aes_key.txt` under `./` with your AES key in the format of a comma-separated string, e.g. `1,2,3,4...`.
@@ -60,6 +60,10 @@ You should note the port that the service is hosted on via the console output.
 `docker compose up --build`
 
 The web application is preconfigured to run on port `8080` and the Microsoft SQL Server 2022 container is preconfigured to run on port `1433`.
+
+## Tests
+
+Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`
 
 ## Features
 
