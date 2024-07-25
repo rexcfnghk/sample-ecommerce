@@ -1,0 +1,313 @@
+{
+	"info": {
+		"_postman_id": "87fc5ea6-9158-4ccc-b8f1-9d66450baea1",
+		"name": "Sample ECommerce Happy Path Integration Test",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4488840"
+	},
+	"item": [
+		{
+			"name": "Create a user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"pm.variables.set('userName', pm.variables.replaceIn('{{$randomUserName}}'));\r",
+							"pm.variables.set('password', pm.variables.replaceIn('{{$randomPassword}}'));"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"{{userName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a session with userName and password",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Body contains JWT\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('token');\r",
+							"});\r",
+							"\r",
+							"pm.variables.set(\"jwtToken\", jsonData.token);\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userName\": \"{{userName}}\",\r\n    \"password\": \"{{password}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Sessions",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Sessions"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List orders should return empty",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body should be empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Users/Orders",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Users",
+						"Orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create a valid order",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"var jsonData = pm.response.json();\r",
+							"\r",
+							"pm.test(\"Body contains order ID and order time\", function () {\r",
+							"    pm.expect(jsonData).to.have.property('orderId');\r",
+							"    pm.expect(jsonData).to.have.property('orderTime');\r",
+							"});\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"orderItems\": [\r\n        {\r\n            \"productId\": \"p1\",\r\n            \"quantity\": 2\r\n        }\r\n    ]\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/Users/Orders",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Users",
+						"Orders"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "List orders should return one single item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Body should be empty\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData).to.not.be.empty;\r",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{jwtToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/Users/Orders",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Users",
+						"Orders"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "url",
+			"value": "https://localhost:7272",
+			"type": "string"
+		}
+	]
+}
