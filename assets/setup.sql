@@ -2,6 +2,12 @@ DROP DATABASE IF EXISTS SampleECommerceDb
 
 CREATE DATABASE SampleECommerceDb
 
+GO
+
+Use SampleECommerceDb
+
+GO
+
 CREATE TABLE Users (
     Id INT NOT NULL IDENTITY(1,1) PRIMARY KEY,
     UserName NVARCHAR(50) NOT NULL,

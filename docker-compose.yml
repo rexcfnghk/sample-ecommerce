@@ -1,7 +1,7 @@
 ﻿services:
   sampleecommerce.web:
     depends_on:
-      - sampleecommerce.db
+      - sampleecommerce.dbseed
     image: sampleecommerce.web
     ports:
       - "8080:8080"
@@ -28,6 +28,12 @@
     environment:
       ACCEPT_EULA: "Y"
       MSSQL_SA_PASSWORD_FILE : /run/secrets/sql_sa_password
+  sampleecommerce.dbseed:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    depends_on:
+      - sampleecommerce.db
+    secrets:
+      - sql_sa_password
     volumes:
       - ./assets:/assets:ro
     entrypoint: /assets/entrypoint.sh
