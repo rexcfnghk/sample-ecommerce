@@ -17,7 +17,6 @@ If you are building this via [Docker Compose](https://docs.docker.com/compose/),
 
 The solution requires a few settings/secrets to run:
 
-
 ### Running locally
 
 1. A connection string to LocalDB. This can be configured under `appsettings.Development.json`
@@ -63,7 +62,9 @@ The web application is preconfigured to run on port `8080` and the Microsoft SQL
 
 ## Tests
 
-Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`
+Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`.
+
+A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`). The variable `url` should be set to point to URL where the app is listening on.
 
 ## Features
 
