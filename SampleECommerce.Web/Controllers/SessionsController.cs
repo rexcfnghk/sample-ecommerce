@@ -20,6 +20,15 @@ public class SessionsController(
         passwordEncryptionService;
     private readonly IJwtGenerator _jwtGenerator = jwtGenerator;
     
+    /// <summary>
+    /// Creates a session for the user
+    /// </summary>
+    /// <param name="dto">The username and password combination for the user</param>
+    /// <param name="token"></param>
+    /// <response code="200">A session is successfully created</response>
+    /// <response code="400">When there are missing field(s), or the request is malformed</response>
+    /// <response code="401">The system cannot authenticate the user</response>
+    /// <returns>The order that the user made</returns>
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]

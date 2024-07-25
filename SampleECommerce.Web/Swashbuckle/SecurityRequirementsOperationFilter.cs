@@ -17,6 +17,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
         {
             return;
         }
+        
         operation.Security = new List<OpenApiSecurityRequirement>
         {
             new()
@@ -25,7 +26,7 @@ public class SecurityRequirementsOperationFilter : IOperationFilter
                     new OpenApiSecurityScheme {
                         Reference = new OpenApiReference {
                             Type = ReferenceType.SecurityScheme,
-                            Id = "bearer"
+                            Id = "Bearer"
                         }
                     }, Array.Empty<string>()
                 }

@@ -13,7 +13,7 @@ CREATE TABLE Users (
     UserName NVARCHAR(50) NOT NULL,
     EncryptedPassword VARBINARY(128) NOT NULL,
     Salt VARBINARY(16) NOT NULL,
-    Balance SMALLMONEY NOT NULL DEFAULT (100.00)
+    Balance MONEY NOT NULL DEFAULT (100.00)
 
     CONSTRAINT AK_Users_UserNameId UNIQUE(UserName)
     CONSTRAINT AK_Users_Balance CHECK (Balance >= 0)
@@ -22,7 +22,7 @@ CREATE TABLE Users (
 CREATE TABLE Products(
     Id NVARCHAR(50) NOT NULL PRIMARY KEY,
     Name NVARCHAR(50) NOT NULL,
-    Price SMALLMONEY NOT NULL,
+    Price MONEY NOT NULL,
     Quantity INT NOT NULL,
     Category NVARCHAR(50) NOT NULL,
 

@@ -1,3 +1,4 @@
+using System.Reflection;
 using System.Text;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -49,6 +50,8 @@ serviceCollection.AddSwaggerGen(
         
         c.OperationFilter<OpenApiParameterIgnoreFilter>();
         c.OperationFilter<SecurityRequirementsOperationFilter>();
+        var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+        c.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
     });
 
 serviceCollection.AddControllers(
