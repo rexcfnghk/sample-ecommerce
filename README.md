@@ -11,9 +11,14 @@ If you are building this locally, you should have the following installed:
     - For Windows, the [Hosting Bundle](https://dotnet.microsoft.com/en-us/download/dotnet/thank-you/runtime-aspnetcore-8.0.7-windows-hosting-bundle-installer) is recommended
 3. [Microsoft SQL Server LocalDB](https://go.microsoft.com/fwlink/?linkid=2215160)
 
+If you are building this via [Docker Compose](https://docs.docker.com/compose/), you should have [Docker Desktop](https://docs.docker.com/engine/install/) installed.
+
 ## Settings/Secrets
 
-The solution requires two settings/secrets to run:
+The solution requires a few settings/secrets to run:
+
+
+### Running locally
 
 1. A connection string to LocalDB. This can be configured under `appsettings.Development.json`
 2. A 128-bit AES Key to encrypt passwords generated for users. This can be configured by:
@@ -23,9 +28,38 @@ The solution requires two settings/secrets to run:
     1. `cd ./SampleECommerce.Web`
     2. `dotnet user-secrets set "Jwt:SecurityKey" "{your security key}"`
 
+### Running in Docker
+
+Since secrets are passed as [Docker secrets](https://docs.docker.com/engine/swarm/secrets/), you are required to provide the 3 values above via a file mechanism:
+
+1. (This corresponds the point 1 in Running Locally) You should provide a text file named `connectionstrings_development.txt` under `./` with your connection string to Microsoft SQL Server 2022 docker image, as specified in the `docker-compose.yml`.
+2. (This corresponds the point 2 in Running Locally) You should provide a text file named `aes_key.txt` under `./` with your AES key in the format of a comma-separated string, e.g. `1,2,3,4...`.
+3. (This corresponds the point 3 in Running Locally) You should provide a text file named `jwt_securitykey.txt` under `./` with your security key used to sign JSON Web Tokens.
+4. You should provide a text file named `sql_sa_password.txt` under `./` to configure the password used for the database system administrator (SA). Note that this is subject to Microsoft SQL Server's password requirements (at least 8 characters including uppercase, lowercase letters, base-10 digits and/or non-alphanumeric symbols).
+
 ## SQL seed scripts
 
-Before running the application, the seed script should be run to create the tables. This is found under `assets/seed-scripts.sql`.
+### Running locally
+
+Before running the application, the seed script should be run to create the tables. This is found under `assets/setup.sql`.
+
+### Running in Docker
+
+A Docker container is automatically run to seed script to seed the database. No manual intervention is needed.
+
+## How to run
+
+### Running locally
+
+`dotnet run SampleECommerce.Web/SampleECommerce.Web.csproj -c Release`
+
+You should note the port that the service is hosted on via the console output.
+
+### Running in Docker
+
+`docker compose up --build`
+
+The web application is preconfigured to run on port `8080` and the Microsoft SQL Server 2022 container is preconfigured to run on port `1433`.
 
 ## Features
 
@@ -44,3 +78,4 @@ TBD
 4. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
 5. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
 6. The JWT authentication is currently configured to not validate the `issuer` nor the `audience`. This might be vulnerable to a [forwarding attack](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.tokenvalidationparameters.validateissuer?view=msal-web-dotnet-latest).
+7. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
