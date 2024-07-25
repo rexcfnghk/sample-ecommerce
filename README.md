@@ -22,17 +22,17 @@ The solution requires a few settings/secrets to run:
 1. A connection string to LocalDB. This can be configured under `appsettings.Development.json`
 2. A 128-bit AES Key to encrypt passwords generated for users. This can be configured by:
     1. `cd ./SampleECommerce.Web`
-    2. `dotnet user-secrets set "Aes:Key" "{your 128-bit AES key}"` (Note that the key is in the format of a comma-separated string, e.g. `1,2,3,4...`)
+    2. `dotnet user-secrets set "Aes:Key" "{your 128-bit AES key}"` (Note that the key is in the format of comma-separated byte values, e.g. `1,2,3,4...`)
 3. A security key used to sign JSON Web Tokens used for authentication. Note that the algorithm used (configured in `appsettings.Development.json`, defaults to `HS256`) controls the number of bits required for the security key. The security key can be configured by:
     1. `cd ./SampleECommerce.Web`
     2. `dotnet user-secrets set "Jwt:SecurityKey" "{your security key}"`
 
 ### Running in Docker
 
-Since secrets are passed as [Docker secrets](https://docs.docker.com/engine/swarm/secrets/), you are required to provide the above 3 secrets and 1 additional secret above via a file mechanism:
+Since secrets are passed as [Docker secrets](https://docs.docker.com/engine/swarm/secrets/), you are required to provide the above 3 secrets and 1 additional secret via a file mechanism:
 
-1. (This corresponds the point 1 in Running Locally) You should provide a text file named `connectionstrings_development.txt` under `./` with your connection string to Microsoft SQL Server 2022 docker image, as specified in the `docker-compose.yml`.
-2. (This corresponds the point 2 in Running Locally) You should provide a text file named `aes_key.txt` under `./` with your AES key in the format of a comma-separated string, e.g. `1,2,3,4...`.
+1. (This corresponds the point 1 in Running Locally) You should provide a text file named `connectionstrings_development.txt` under `./` with your connection string to the Microsoft SQL Server 2022 container, as specified in the `docker-compose.yml`.
+2. (This corresponds the point 2 in Running Locally) You should provide a text file named `aes_key.txt` under `./` with your AES key in the format of comma-separated byte values, e.g. `1,2,3,4...`.
 3. (This corresponds the point 3 in Running Locally) You should provide a text file named `jwt_securitykey.txt` under `./` with your security key used to sign JSON Web Tokens.
 4. You should provide a text file named `sql_sa_password.txt` under `./` to configure the password used for the database system administrator (SA). Note that this is subject to Microsoft SQL Server's password requirements (at least 8 characters including uppercase, lowercase letters, base-10 digits and/or non-alphanumeric symbols).
 
@@ -60,12 +60,6 @@ You should note the port that the service is hosted on via the console output.
 
 The web application is preconfigured to run on port `8080` and the Microsoft SQL Server 2022 container is preconfigured to run on port `1433`.
 
-## Tests
-
-Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`.
-
-A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`). The variable `url` should be set to point to URL where the app is listening on.
-
 ## Features
 
 - Swagger UI at `/swagger`
@@ -73,7 +67,13 @@ A happy path integration test case can be run by importing the [Postman](https:/
 
 ## Endpoints
 
-TBD
+When the app is up, visit `{baseUrl}/swagger` for an interactive page to examine endpoints, headers, request, and response formats.
+
+## Tests
+
+Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`.
+
+A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`). The variable `url` should be set to point to URL where the app is listening on.
 
 ## Limitations
 
@@ -82,5 +82,4 @@ TBD
 3. The LocalDB used is only for development purpose. A proper version of Microsoft SQL Server should be used in production scenarios.
 4. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
 5. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
-6. The JWT authentication is currently configured to not validate the `issuer` nor the `audience`. This might be vulnerable to a [forwarding attack](https://learn.microsoft.com/en-us/dotnet/api/microsoft.identitymodel.tokens.tokenvalidationparameters.validateissuer?view=msal-web-dotnet-latest).
-7. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
+6. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
