@@ -85,6 +85,8 @@ container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<IOrderService, OrderService>();
 container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
 container.RegisterDecorator<IOrderRepository, CatchContraintViolationOrderRepository>(Lifestyle.Singleton);
+container.RegisterSingleton<IOrderIdGenerator, GuidOrderIdGenerator>();
+container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeGenerator>();
 container.RegisterSingleton<IProductService, ProductService>();
 container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
 

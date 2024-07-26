@@ -12,4 +12,6 @@ public interface IOrderService
         int userId,
         Order order,
         CancellationToken token = default);
+
+    Order GenerateOrder(IReadOnlyList<OrderItem> orderItems);
 }

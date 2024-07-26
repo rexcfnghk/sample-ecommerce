@@ -132,17 +132,11 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
             return BadRequest("No order items submitted");
         }
 
-        var orderId = Guid.NewGuid();
-        var orderTime = DateTimeOffset.Now;
-
-        var order = new Order(
-            orderId,
-            orderTime,
-            orderItemList);
+        var order = _orderService.GenerateOrder(orderItemList);
 
         await _orderService.PostOrderAsync(userId.UserId, order, token);
 
         return new OrderSuccessfulDto
-            { OrderId = orderId, OrderTime = orderTime };
+            { OrderId = order.Id, OrderTime = order.OrderTime };
     }
 }
