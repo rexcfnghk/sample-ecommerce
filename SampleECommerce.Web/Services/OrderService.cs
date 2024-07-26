@@ -19,9 +19,7 @@ public class OrderService(IOrderRepository orderRepository, IOrderIdGenerator or
         int userId,
         Order order,
         CancellationToken token = default) =>
-        order.OrderItems.Count == 0
-            ? Task.CompletedTask
-            : _orderRepository.PostOrderAsync(userId, order, token);
+        _orderRepository.PostOrderAsync(userId, order, token);
 
     public Order GenerateOrder(IReadOnlyList<OrderItem> orderItems)
     {
