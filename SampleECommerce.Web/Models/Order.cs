@@ -7,6 +7,8 @@ public class Order
 {
     public Order(Guid id, DateTimeOffset orderTime, IReadOnlyList<OrderItem> orderItems)
     {
+        ArgumentOutOfRangeException.ThrowIfEqual(id, Guid.Empty, nameof(id));
+        ArgumentNullException.ThrowIfNull(orderItems, nameof(orderItems));
         ArgumentOutOfRangeException.ThrowIfZero(orderItems.Count, nameof(orderItems.Count));
         
         Id = id;
