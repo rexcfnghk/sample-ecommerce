@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SampleECommerce.Web.Aes;
+using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
@@ -39,13 +40,13 @@ serviceCollection.AddEndpointsApiExplorer();
 serviceCollection.AddSwaggerGen(
     c =>
     {
-        c.AddSecurityDefinition(name: "Bearer", securityScheme: new OpenApiSecurityScheme
+        c.AddSecurityDefinition(name: AuthenticationSchemes.Bearer, securityScheme: new OpenApiSecurityScheme
         {
             Name = "Authorization",
-            Description = "Enter the Bearer Authorization string as following: `Bearer Generated-JWT-Token`",
+            Description = "Enter the Bearer Authorization string as following: `Bearer {token}`",
             In = ParameterLocation.Header,
             Type = SecuritySchemeType.ApiKey,
-            Scheme = "Bearer"
+            Scheme = AuthenticationSchemes.Bearer
         });
         
         c.OperationFilter<OpenApiParameterIgnoreFilter>();
@@ -91,7 +92,7 @@ RegisterJwtIssuer();
 RegisterSigningCredentials();
 RegisterAesKey();
 
-serviceCollection.AddAuthentication("Bearer")
+serviceCollection.AddAuthentication(AuthenticationSchemes.Bearer)
     .AddJwtBearer(
         opt =>
         {

@@ -15,8 +15,8 @@ public sealed class AesKey(byte[] key) : IEquatable<AesKey>
         {
             return true;
         }
-        
-        return Key.Equals(other.Key);
+
+        return Key.SequenceEqual(other.Key);
     }
 
     public override bool Equals(object? obj) => obj is AesKey other && Equals(other);

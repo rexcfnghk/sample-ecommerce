@@ -1,6 +1,5 @@
 ﻿using System.Data;
 using Microsoft.Data.SqlClient;
-using SampleECommerce.Web.Exceptions;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 

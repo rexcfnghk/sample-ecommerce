@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.ModelBinders;
 using SampleECommerce.Web.Models;
@@ -57,7 +58,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     /// <response code="400">When there are missing field(s), or the request is malformed</response>
     /// <response code="403">The system cannot authenticate/authorize the user</response>
     [HttpGet("Orders")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.Bearer )]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -97,7 +98,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     /// <response code="401">The system cannot authenticate the user</response>
     /// <returns>The order that the user made</returns>
     [HttpPost("Orders")]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.Bearer)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]

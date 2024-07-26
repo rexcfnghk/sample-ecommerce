@@ -12,22 +12,30 @@ namespace SampleECommerce.Tests.Controllers;
 public class UsersControllerTests
 {
     [Theory, AutoNSubstituteData]
-    public async Task Signup_ReturnsExpectedJwtToken(
-        JwtToken expected,
+    public async Task Signup_CallsUserSignUpService(
         [Frozen] IUserSignupService mockUserSignupService,
         UserRequestDto dto,
         UsersController sut,
         CancellationToken token)
     {
+        // Arrange
         mockUserSignupService.SignupAsync(
                 Arg.Is<UserSignupRequest>(
                     r => r.Username == dto.UserName &&
                          r.Password == dto.Password),
                 token)
-            .Returns(Task.FromResult(expected));
+            .Returns(Task.CompletedTask);
         
+        // Act
         var result = await sut.Signup(dto, token);
 
+        // Assert
+        mockUserSignupService.Received(1)
+            .SignupAsync(
+                Arg.Is<UserSignupRequest>(
+                    r => r.Username == dto.UserName &&
+                         r.Password == dto.Password),
+                token);
         Assert.IsType<NoContentResult>(result);
     }
 
