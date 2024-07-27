@@ -120,6 +120,7 @@ container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeG
 container.RegisterSingleton<IProductService, ProductService>();
 container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
 container.RegisterSingleton<IBasicAuthDecoder, Base64BasicAuthDecoder>();
+container.RegisterDecorator<IBasicAuthDecoder, CatchFormatExceptionBasicAuthDecoder>(Lifestyle.Singleton);
 container.RegisterSingleton<BasicAuthenticationHandler>();
 
 RegisterJwtIssuer();
