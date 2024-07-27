@@ -2,5 +2,7 @@
 
 public interface ISerializer
 {
-    ValueTask<T?> DeserializeAsync<T>(Stream stream);
+    ValueTask<T?> DeserializeAsync<T>(
+        Stream stream,
+        CancellationToken cancellationToken = default);
 }

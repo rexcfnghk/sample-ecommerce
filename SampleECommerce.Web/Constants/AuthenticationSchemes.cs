@@ -2,5 +2,7 @@
 
 public static class AuthenticationSchemes
 {
-    public const string Bearer = "Bearer";
+    public const string Bearer = nameof(Bearer);
+
+    public const string UserNamePassword = nameof(UserNamePassword);
 }

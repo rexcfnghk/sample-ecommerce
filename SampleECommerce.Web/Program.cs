@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Text;
+using System.Text.Json;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption.ConfigurationModel;
@@ -7,6 +9,7 @@ using Microsoft.IdentityModel.JsonWebTokens;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SampleECommerce.Web.Aes;
+using SampleECommerce.Web.AuthenticationHandlers;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
@@ -48,7 +51,8 @@ serviceCollection.AddSwaggerGen(
             Type = SecuritySchemeType.ApiKey,
             Scheme = AuthenticationSchemes.Bearer
         });
-        
+
+        c.OperationFilter<AddUserRequestDtoOperationFilter>();
         c.OperationFilter<OpenApiParameterIgnoreFilter>();
         c.OperationFilter<SecurityRequirementsOperationFilter>();
         var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -73,28 +77,10 @@ serviceCollection.AddSimpleInjector(
         options.AddAspNetCore().AddControllerActivation();
     });
 
-container.RegisterSingleton<IUserSignupService, UserSignupService>();
-container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
-container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
-container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
-container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
-container.RegisterSingleton<ISerializer, DotNetJsonSerializer>();
-container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
-container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
-container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
-container.RegisterSingleton<IOrderService, OrderService>();
-container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
-container.RegisterDecorator<IOrderRepository, CatchContraintViolationOrderRepository>(Lifestyle.Singleton);
-container.RegisterSingleton<IOrderIdGenerator, GuidOrderIdGenerator>();
-container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeGenerator>();
-container.RegisterSingleton<IProductService, ProductService>();
-container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
-
-RegisterJwtIssuer();
-RegisterSigningCredentials();
-RegisterAesKey();
-
-serviceCollection.AddAuthentication(AuthenticationSchemes.Bearer)
+serviceCollection
+    .AddAuthentication()
+    .AddScheme<AuthenticationSchemeOptions, UserNamePasswordAuthenticationHandler>("UserNamePassword",
+        _ => { })
     .AddJwtBearer(
         opt =>
         {
@@ -109,6 +95,33 @@ serviceCollection.AddAuthentication(AuthenticationSchemes.Bearer)
             opt.TokenValidationParameters.IssuerSigningKey =
                 container.GetInstance<SigningCredentials>().Key;
         });
+
+CrossWireAspNetCoreDependencies(serviceCollection);
+
+container.RegisterSingleton<IUserSignupService, UserSignupService>();
+container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
+container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
+container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
+container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
+container.RegisterSingleton<ISerializer>(
+    () => new DotNetJsonSerializer(
+        new JsonSerializerOptions
+            { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
+container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
+container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
+container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
+container.RegisterSingleton<IOrderService, OrderService>();
+container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
+container.RegisterDecorator<IOrderRepository, CatchContraintViolationOrderRepository>(Lifestyle.Singleton);
+container.RegisterSingleton<IOrderIdGenerator, GuidOrderIdGenerator>();
+container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeGenerator>();
+container.RegisterSingleton<IProductService, ProductService>();
+container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
+container.RegisterSingleton<UserNamePasswordAuthenticationHandler>();
+
+RegisterJwtIssuer();
+RegisterSigningCredentials();
+RegisterAesKey();
 
 var app = builder.Build();
 
@@ -184,4 +197,17 @@ void RegisterSigningCredentials()
         () => new SigningCredentials(
             new SymmetricSecurityKey(Encoding.UTF8.GetBytes(securityKey)),
             algorithm));
+}
+
+void CrossWireAspNetCoreDependencies(
+    IServiceCollection serviceCollection1)
+{
+    serviceCollection1.AddSingleton(
+        _ => container.GetInstance<UserNamePasswordAuthenticationHandler>());
+    serviceCollection1.AddSingleton<IPasswordEncryptionService>(
+        _ => container.GetInstance<IPasswordEncryptionService>());
+    serviceCollection1.AddSingleton<IUserRepository>(
+        _ => container.GetInstance<IUserRepository>());
+    serviceCollection1.AddSingleton<ISerializer>(
+        _ => container.GetInstance<ISerializer>());
 }
