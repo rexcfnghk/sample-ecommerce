@@ -6,31 +6,37 @@ namespace SampleECommerce.Web.Swashbuckle;
 
 public class SecurityRequirementsOperationFilter : IOperationFilter
 {
-    public void Apply(OpenApiOperation operation, OperationFilterContext context)
+    public void Apply(
+        OpenApiOperation operation,
+        OperationFilterContext context)
     {
-        var containsAuthorizeAttribute =
-            context.MethodInfo.GetCustomAttributes(true)
-                .Any(x => x is AuthorizeAttribute) ||
-            (context.MethodInfo.DeclaringType?.GetCustomAttributes(true)
-                .Any(x => x is AuthorizeAttribute) ?? false);
-        if (!containsAuthorizeAttribute)
+        var authorizeAttributes = context.MethodInfo.GetCustomAttributes(true)
+            .Concat(context.MethodInfo.DeclaringType!.GetCustomAttributes(true))
+            .OfType<AuthorizeAttribute>()
+            .ToList();
+        if (authorizeAttributes.Count == 0)
         {
             return;
         }
-        
-        operation.Security = new List<OpenApiSecurityRequirement>
+
+        operation.Security ??= new List<OpenApiSecurityRequirement>();
+        foreach (var authorizeAttribute in authorizeAttributes)
         {
-            new()
-            {
+            operation.Security.Add(
+                new OpenApiSecurityRequirement
                 {
-                    new OpenApiSecurityScheme {
-                        Reference = new OpenApiReference {
-                            Type = ReferenceType.SecurityScheme,
-                            Id = "Bearer"
-                        }
-                    }, Array.Empty<string>()
-                }
-            }
-        };
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = authorizeAttribute.AuthenticationSchemes
+                            }
+                        },
+                        Array.Empty<string>()
+                    }
+                });
+        }
     }
 }

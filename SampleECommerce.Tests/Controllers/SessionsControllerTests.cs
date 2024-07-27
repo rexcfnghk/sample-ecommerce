@@ -1,6 +1,5 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using System.Text;
 using AutoFixture.Xunit2;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,8 +9,6 @@ using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Controllers;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Jwt;
-using SampleECommerce.Web.Models;
-using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Tests.Controllers;
 
@@ -30,8 +27,7 @@ public class SessionsControllerTests
         [Frozen] ClaimsPrincipal principal,
         [Frozen] HttpContext httpContext, 
         [Frozen] IJwtGenerator jwtGenerator,
-        SessionsController sut,
-        CancellationToken token)
+        SessionsController sut)
     {
         // Arrange
         principal.AddIdentity(

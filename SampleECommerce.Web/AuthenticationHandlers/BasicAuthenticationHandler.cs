@@ -2,30 +2,30 @@
 using System.Security.Claims;
 using System.Text;
 using System.Text.Encodings.Web;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
+using Microsoft.Extensions.Primitives;
+using SampleECommerce.Web.BasicAuthDecoders;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
-using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.AuthenticationHandlers;
 
-public class UserNamePasswordAuthenticationHandler(
+public class BasicAuthenticationHandler(
     IOptionsMonitor<AuthenticationSchemeOptions> options,
     ILoggerFactory logger,
     UrlEncoder encoder,
+    IBasicAuthDecoder basicAuthDecoder,
     IUserRepository userRepository,
-    ISerializer serializer,
     IPasswordEncryptionService passwordEncryptionService)
     : AuthenticationHandler<AuthenticationSchemeOptions>(
         options,
         logger,
         encoder)
 {
+    private readonly IBasicAuthDecoder _basicAuthDecoder = basicAuthDecoder;
     private readonly IUserRepository _userRepository = userRepository;
-    private readonly ISerializer _serializer = serializer;
     private readonly IPasswordEncryptionService _passwordEncryptionService =
         passwordEncryptionService;
 
@@ -33,21 +33,21 @@ public class UserNamePasswordAuthenticationHandler(
     {
         var request = Context.Request;
         var cancellationToken = Context.RequestAborted;
-        request.EnableBuffering();
 
-        using var streamReader = new StreamReader(
-            request.Body,
-            Encoding.UTF8,
-            bufferSize: -1,
-            leaveOpen: true);
+        var authorization = request.Headers.Authorization;
+        if (authorization.Count is 0 or > 1)
+        {
+            return AuthenticateResult.Fail(
+                "Unknown authorization header value");
+        }
 
-        var dto = await _serializer.DeserializeAsync<UserRequestDto>(
-            streamReader.BaseStream,
-            cancellationToken: cancellationToken);
+        var base64EncodedString = RemoveBasicAuthenticationScheme(authorization);
+        var dto =
+            _basicAuthDecoder.Decode(base64EncodedString);
         if (dto == null)
         {
             return AuthenticateResult.Fail(
-                "Cannot deserialize body into username and password combination");
+                "Cannot decode body into username and password combination");
         }
 
         var signedUpUser =
@@ -72,9 +72,12 @@ public class UserNamePasswordAuthenticationHandler(
         }
 
         var authenticationTicket = GetAuthenticationTicket(signedUpUser.Id);
-
-        request.Body.Seek(0, SeekOrigin.Begin);
         return AuthenticateResult.Success(authenticationTicket);
+    }
+
+    private static string RemoveBasicAuthenticationScheme(StringValues authorization)
+    {
+        return authorization.Single()![6..];
     }
 
     private static AuthenticationTicket GetAuthenticationTicket(int userId)
@@ -87,12 +90,12 @@ public class UserNamePasswordAuthenticationHandler(
         };
         var identity = new ClaimsIdentity(
             claims,
-            AuthenticationSchemes.UserNamePassword);
+            AuthenticationSchemes.Basic);
         var principal = new ClaimsPrincipal(identity);
         var authenticationTicket =
             new AuthenticationTicket(
                 principal,
-                AuthenticationSchemes.UserNamePassword);
+                AuthenticationSchemes.Basic);
         return authenticationTicket;
     }
 }
