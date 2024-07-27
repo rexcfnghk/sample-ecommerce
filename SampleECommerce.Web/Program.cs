@@ -1,6 +1,5 @@
 using System.Reflection;
 using System.Text;
-using System.Text.Json;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.DataProtection.AuthenticatedEncryption;
@@ -10,11 +9,11 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using SampleECommerce.Web.Aes;
 using SampleECommerce.Web.AuthenticationHandlers;
+using SampleECommerce.Web.BasicAuthDecoders;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
 using SampleECommerce.Web.Repositories;
-using SampleECommerce.Web.Serializers;
 using SampleECommerce.Web.Services;
 using SampleECommerce.Web.Swashbuckle;
 using SampleECommerce.Web.ValueProviders;
@@ -51,8 +50,16 @@ serviceCollection.AddSwaggerGen(
             Type = SecuritySchemeType.ApiKey,
             Scheme = AuthenticationSchemes.Bearer
         });
+        
+        c.AddSecurityDefinition(name: AuthenticationSchemes.Basic, securityScheme: new OpenApiSecurityScheme
+        {
+            Name = "Authorization",
+            Description = "Basic authentication",
+            In = ParameterLocation.Header,
+            Type = SecuritySchemeType.Http,
+            Scheme = AuthenticationSchemes.Basic
+        });
 
-        c.OperationFilter<AddUserRequestDtoOperationFilter>();
         c.OperationFilter<OpenApiParameterIgnoreFilter>();
         c.OperationFilter<SecurityRequirementsOperationFilter>();
         var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
@@ -79,7 +86,7 @@ serviceCollection.AddSimpleInjector(
 
 serviceCollection
     .AddAuthentication()
-    .AddScheme<AuthenticationSchemeOptions, UserNamePasswordAuthenticationHandler>("UserNamePassword",
+    .AddScheme<AuthenticationSchemeOptions, BasicAuthenticationHandler>(AuthenticationSchemes.Basic,
         _ => { })
     .AddJwtBearer(
         opt =>
@@ -96,18 +103,13 @@ serviceCollection
                 container.GetInstance<SigningCredentials>().Key;
         });
 
-CrossWireAspNetCoreDependencies(serviceCollection);
+CrossWireAspNetCoreDependencies();
 
 container.RegisterSingleton<IUserSignupService, UserSignupService>();
 container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
 container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
 container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
 container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
-container.RegisterSingleton<ISerializer>(
-    () => new DotNetJsonSerializer(
-        new JsonSerializerOptions
-            { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }));
-container.RegisterDecorator<ISerializer, CatchJsonExceptionSerializer>(Lifestyle.Singleton);
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<IOrderService, OrderService>();
@@ -117,7 +119,8 @@ container.RegisterSingleton<IOrderIdGenerator, GuidOrderIdGenerator>();
 container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeGenerator>();
 container.RegisterSingleton<IProductService, ProductService>();
 container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
-container.RegisterSingleton<UserNamePasswordAuthenticationHandler>();
+container.RegisterSingleton<IBasicAuthDecoder, Base64BasicAuthDecoder>();
+container.RegisterSingleton<BasicAuthenticationHandler>();
 
 RegisterJwtIssuer();
 RegisterSigningCredentials();
@@ -199,15 +202,14 @@ void RegisterSigningCredentials()
             algorithm));
 }
 
-void CrossWireAspNetCoreDependencies(
-    IServiceCollection serviceCollection1)
+void CrossWireAspNetCoreDependencies()
 {
-    serviceCollection1.AddSingleton(
-        _ => container.GetInstance<UserNamePasswordAuthenticationHandler>());
-    serviceCollection1.AddSingleton<IPasswordEncryptionService>(
+    serviceCollection.AddSingleton(
+        _ => container.GetInstance<BasicAuthenticationHandler>());
+    serviceCollection.AddSingleton<IPasswordEncryptionService>(
         _ => container.GetInstance<IPasswordEncryptionService>());
-    serviceCollection1.AddSingleton<IUserRepository>(
+    serviceCollection.AddSingleton<IUserRepository>(
         _ => container.GetInstance<IUserRepository>());
-    serviceCollection1.AddSingleton<ISerializer>(
-        _ => container.GetInstance<ISerializer>());
+    serviceCollection.AddSingleton<IBasicAuthDecoder>(
+        _ => container.GetInstance<IBasicAuthDecoder>());
 }

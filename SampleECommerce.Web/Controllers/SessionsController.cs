@@ -25,7 +25,7 @@ public class SessionsController(IJwtGenerator jwtGenerator) : ControllerBase
     [HttpPost]
     [Consumes(MediaTypeNames.Application.Json)]
     [Produces(MediaTypeNames.Application.Json)]
-    [Authorize(AuthenticationSchemes = AuthenticationSchemes.UserNamePassword)]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.Basic)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
