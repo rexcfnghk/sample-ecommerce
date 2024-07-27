@@ -28,12 +28,11 @@ public class MicrosoftJwtGenerator(
             Issuer = _issuer.Issuer,
             Audience = _issuer.Issuer,
             Subject = new ClaimsIdentity(
-                new[]
-                {
+                [
                     new Claim(
                         JwtRegisteredClaimNames.Sub,
                         userId.ToString(CultureInfo.InvariantCulture))
-                }),
+                ]),
             Expires = _expiryCalculator.CalculateExpiry(),
             SigningCredentials = _signingCredentials
         };
