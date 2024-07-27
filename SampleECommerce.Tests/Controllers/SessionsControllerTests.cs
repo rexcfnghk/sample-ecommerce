@@ -1,8 +1,12 @@
-﻿using System.Text;
+﻿using System.Globalization;
+using System.Security.Claims;
+using System.Text;
 using AutoFixture.Xunit2;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using NSubstitute;
 using SampleECommerce.Tests.Attributes;
+using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Controllers;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Jwt;
@@ -20,28 +24,29 @@ public class SessionsControllerTests
     }
 
     [Theory, AutoNSubstituteData]
-    public async Task CreateSession_GeneratesExpectedJwt(
+    public void CreateSession_GeneratesExpectedJwt(
+        int userId,
         string expected,
-        UserRequestDto userRequestDto,
-        SignedUpUser signedUpUser,
-        [Frozen] IUserRepository userRepository,
-        [Frozen] IPasswordEncryptionService passwordEncryptionService,
+        [Frozen] ClaimsPrincipal principal,
+        [Frozen] HttpContext httpContext, 
         [Frozen] IJwtGenerator jwtGenerator,
         SessionsController sut,
         CancellationToken token)
     {
         // Arrange
-        userRepository.RetrieveUserAsync(userRequestDto.UserName, token)
-            .Returns(Task.FromResult(signedUpUser));
-        
-        passwordEncryptionService
-            .Encrypt(userRequestDto.Password, signedUpUser.Salt)
-            .Returns(signedUpUser.EncryptedPassword);
-        
-        jwtGenerator.Generate(signedUpUser.Id).Returns(expected);
+        principal.AddIdentity(
+            new ClaimsIdentity(
+                new List<Claim>
+                {
+                    new(
+                        ClaimNames.UserId,
+                        userId.ToString(CultureInfo.InvariantCulture))
+                }));
+        jwtGenerator.Generate(userId).Returns(expected);
+        httpContext.User = principal;
 
         // Act
-        var actionResult = await sut.CreateSession(userRequestDto, token);
+        var actionResult = sut.CreateSession();
 
         // Assert
         Assert.IsType<JwtTokenDto>(actionResult.Value);

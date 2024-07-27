@@ -2,8 +2,16 @@
 
 namespace SampleECommerce.Web.Serializers;
 
-public class DotNetJsonSerializer : ISerializer
+public class DotNetJsonSerializer(JsonSerializerOptions jsonSerializerOptions) : ISerializer
 {
-    public ValueTask<T?> DeserializeAsync<T>(Stream stream)
-        => JsonSerializer.DeserializeAsync<T>(stream);
+    private readonly JsonSerializerOptions _jsonSerializerOptions =
+        jsonSerializerOptions;
+
+    public ValueTask<T?> DeserializeAsync<T>(
+        Stream stream,
+        CancellationToken cancellationToken = default)
+        => JsonSerializer.DeserializeAsync<T>(
+            stream,
+            _jsonSerializerOptions,
+            cancellationToken);
 }
