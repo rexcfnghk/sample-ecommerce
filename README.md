@@ -69,11 +69,25 @@ The web application is preconfigured to run on port `8080` and the Microsoft SQL
 
 When the app is up, visit `{baseUrl}/swagger` for an interactive page to examine endpoints, headers, request, and response formats.
 
+The Postman collection (explained below) also shows the expected HTTP call sequence.
+
 ## Tests
+
+### Unit Tests
 
 Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Tests.csproj`.
 
+### Integration Tests
+
 A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`). The variable `url` should be set to point to URL where the app is listening on.
+
+The collection does the following:
+
+1. Calls the `POST /Users` endpoint with a randomly generated username and password.
+2. Calls the `POST /Session` endpoint using `Basic` authentication with the username and password generated from the previous step.
+3. Calls the `GET /Users/Orders` endpoint with the signed JWT generated from the previous step to list orders made by the user (expectation: empty).
+4. Calls the `POST /Users/Orders` endpoint with a known-to-exist `productId` and `quantity` to create a new order.
+5. Calls the `GET /Users/Orders` endpoint again to check whether the order made from the previous step exists and can be returned by the endpoint (expectation: one single order with one single order item).
 
 ## Limitations
 
