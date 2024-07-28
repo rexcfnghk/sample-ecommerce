@@ -92,8 +92,9 @@ The collection does the following:
 ## Limitations
 
 1. The rows in the [Product] table are assumed to be immutable, i.e. Changes to products after users made an order are not propagated.
-2. The secret store used is only for development purpose. A more robust key vault should be used in production scenarios.
-3. The LocalDB used is only for development purpose. A proper version of Microsoft SQL Server should be used in production scenarios.
-4. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
-5. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
-6. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
+2. The local version is running on a self-signed HTTPS certificate which is not suitable for production use.
+3. The local version makes use of .NET's secret store is only for development purpose. A more robust key vault should be used in production scenarios.
+4. The LocalDB used is only for development purpose. A proper version of Microsoft SQL Server should be used in production scenarios.
+5. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
+6. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
+7. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
