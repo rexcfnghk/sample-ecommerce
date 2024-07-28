@@ -1,8 +1,10 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using JetBrains.Annotations;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SampleECommerce.Web.Dtos;
 
 namespace SampleECommerce.Web.ModelBinders;
 
+[UsedImplicitly]
 public class UserDtoModelBinder : IModelBinder
 {
     public Task BindModelAsync(ModelBindingContext bindingContext)
