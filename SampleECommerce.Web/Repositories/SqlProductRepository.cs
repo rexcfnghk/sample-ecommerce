@@ -6,13 +6,12 @@ using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Repositories;
 
-public class SqlProductRepository(string connectionString) : IProductRepository
+public class SqlProductRepository(ConnectionString connectionString) : IProductRepository
 {
-    private readonly string _connectionString = connectionString;
+    private readonly ConnectionString _connectionString = connectionString;
 
     private const string ProductQuery =
         "SELECT Id, Name, Price, Quantity, Category FROM Products WHERE Id in (@Ids)";
-
     
     public async Task<IReadOnlyList<Product>> GetProductsAsync(ISet<string> productIds, CancellationToken token = default)
     {

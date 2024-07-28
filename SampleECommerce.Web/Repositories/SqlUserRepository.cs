@@ -5,7 +5,7 @@ using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Repositories;
 
-public class SqlUserRepository(string connectionString) : IUserRepository
+public class SqlUserRepository(ConnectionString connectionString) : IUserRepository
 {
     private const string InsertCommand =
         "INSERT INTO Users (UserName, EncryptedPassword, Salt) VALUES (@UserName, @EncryptedPassword, @Salt)";
@@ -13,7 +13,7 @@ public class SqlUserRepository(string connectionString) : IUserRepository
     private const string RetrieveQuery =
         "SELECT Id, UserName, EncryptedPassword, Salt FROM Users WHERE UserName = @UserName";
     
-    private readonly string _connectionString = connectionString;
+    private readonly ConnectionString _connectionString = connectionString;
 
     public async Task AddUserAsync(
         string userName,

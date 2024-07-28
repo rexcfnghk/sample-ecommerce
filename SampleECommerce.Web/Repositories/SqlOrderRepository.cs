@@ -5,7 +5,7 @@ using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Repositories;
 
-public class SqlOrderRepository(string connectionString) : IOrderRepository
+public class SqlOrderRepository(ConnectionString connectionString) : IOrderRepository
 {
     private const string OrderQuery =
         "SELECT o.Id as OrderId, oi.Id as OrderItemId, p.Id as ProductId, " +
@@ -26,7 +26,7 @@ public class SqlOrderRepository(string connectionString) : IOrderRepository
     private const string InsertOrderItemCommand =
         "INSERT INTO OrderItems (OrderId, ProductId, Quantity) VALUES (@OrderId, @ProductId, @Quantity)";
 
-    private readonly string _connectionString = connectionString;
+    private readonly ConnectionString _connectionString = connectionString;
 
     public async Task<IReadOnlyList<Order>> GetOrderItemsAsync(
         int userId,

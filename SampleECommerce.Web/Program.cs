@@ -108,17 +108,18 @@ CrossWireAspNetCoreDependencies();
 container.RegisterSingleton<IUserSignupService, UserSignupService>();
 container.RegisterSingleton<ISaltService, Random128BitsSaltService>();
 container.RegisterSingleton<IPasswordEncryptionService, AesPasswordEncryptionService>();
-container.RegisterSingleton<IUserRepository>(() => new SqlUserRepository(GetConnectionString(builder)));
+container.RegisterSingleton(() => GetConnectionString(builder));
+container.RegisterSingleton<IUserRepository, SqlUserRepository>();
 container.RegisterDecorator<IUserRepository, CatchDuplicateSqlUserRepository>(Lifestyle.Singleton);
 container.RegisterSingleton<IJwtGenerator, MicrosoftJwtGenerator>();
 container.RegisterSingleton<IJwtExpiryCalculator, SevenDaysExpiryCalculator>();
 container.RegisterSingleton<IOrderService, OrderService>();
-container.RegisterSingleton<IOrderRepository>(() => new SqlOrderRepository(GetConnectionString(builder)));
+container.RegisterSingleton<IOrderRepository, SqlOrderRepository>();
 container.RegisterDecorator<IOrderRepository, CatchContraintViolationOrderRepository>(Lifestyle.Singleton);
 container.RegisterSingleton<IOrderIdGenerator, GuidOrderIdGenerator>();
 container.RegisterSingleton<IOrderTimeGenerator, CurrentDateTimeOffsetOrderTimeGenerator>();
 container.RegisterSingleton<IProductService, ProductService>();
-container.RegisterSingleton<IProductRepository>(() => new SqlProductRepository(GetConnectionString(builder)));
+container.RegisterSingleton<IProductRepository, SqlProductRepository>();
 container.RegisterSingleton<IBasicAuthDecoder, Base64BasicAuthDecoder>();
 container.RegisterDecorator<IBasicAuthDecoder, CatchFormatExceptionBasicAuthDecoder>(Lifestyle.Singleton);
 container.RegisterSingleton<BasicAuthenticationHandler>();
@@ -149,7 +150,7 @@ container.Verify();
 app.Run();
 return;
 
-string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
+ConnectionString GetConnectionString(WebApplicationBuilder webApplicationBuilder)
 {
     var connectionString = webApplicationBuilder.Configuration.GetConnectionString(webApplicationBuilder.Environment.EnvironmentName);
     if (connectionString == null)
@@ -157,7 +158,7 @@ string GetConnectionString(WebApplicationBuilder webApplicationBuilder)
         throw new InvalidOperationException(
             "Cannot retrieve connection string");
     }
-    return connectionString;
+    return (ConnectionString)connectionString;
 }
 
 void RegisterAesKey()
