@@ -79,7 +79,7 @@ Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Test
 
 ### Integration Tests
 
-A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`). The variable `url` should be set to point to URL where the app is listening on.
+A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`. The variable `url` should be set to point to URL where the app is listening on.
 
 The collection does the following:
 
@@ -98,3 +98,5 @@ The collection does the following:
 5. The signing key used to sign the JWTs could be rotated by using a JSON Web Key Set (JWKS) to mitigate exposed keys being abused to sign new tokens.
 6. The JWT generated is currently only signed but not encrypted. Depending on the security requirements this might have to be changed to a JWE.
 7. In the containerised setup, the communication is downgraded from HTTPS to HTTP due to the assumption that this backend is sitting behind an API gateway that performs HTTPS downgrading.
+8. Some of the logic is heavily coupled with SQL commands/queries, encryption/decryption, or encoding/decoding. Abstractions are built around these impure logic and a best effort is used to unit test the logic that uses impure components.
+9. Error handling for this app is, in functional programming terms, monadic instead of applicative. This is because C# and the ASP.NET Core framework is built around object-oriented programming concepts, not functional programming. This means that responses would only indicate the first error encountered when the request contains errors at multiple points of execution. This can be improved with a functional language that supports a [Validation applicative function](https://hackage.haskell.org/package/validation-1.1.3/docs/Data-Validation.html) like Haskell.
