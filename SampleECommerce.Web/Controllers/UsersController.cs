@@ -1,13 +1,8 @@
-﻿using System.Collections.ObjectModel;
-using System.Net.Http.Headers;
-using System.Net.Mime;
+﻿using System.Net.Mime;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.ModelBinding;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
-using SampleECommerce.Web.ModelBinders;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 using SampleECommerce.Web.Swashbuckle;
