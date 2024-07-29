@@ -1,9 +1,12 @@
 ﻿using System.Net.Mime;
+using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Jwt;
+using SampleECommerce.Web.Mappers;
+using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.Controllers;
@@ -11,8 +14,10 @@ namespace SampleECommerce.Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-public class SessionsController(IJwtGenerator jwtGenerator) : ControllerBase
+public class SessionsController(IMapper<ClaimsPrincipal, UserId> userIdMapper, IJwtGenerator jwtGenerator) : ControllerBase
 {
+    private readonly IMapper<ClaimsPrincipal, UserId> _userIdMapper =
+        userIdMapper;
     private readonly IJwtGenerator _jwtGenerator = jwtGenerator;
     
     /// <summary>
@@ -31,8 +36,7 @@ public class SessionsController(IJwtGenerator jwtGenerator) : ControllerBase
     [ProducesResponseType(StatusCodes.Status401Unauthorized, Type = typeof(string))]
     public ActionResult<JwtTokenDto> CreateSession()
     {
-        var claim = User.Claims.Single(c => c.Type == ClaimNames.UserId);
-        var userId = int.Parse(claim.Value);
+        var userId = _userIdMapper.Map(User);
         var jwt = _jwtGenerator.Generate(userId);
         return new JwtTokenDto(jwt);
     }

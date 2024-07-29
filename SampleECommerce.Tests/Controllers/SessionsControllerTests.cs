@@ -9,6 +9,8 @@ using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Controllers;
 using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Jwt;
+using SampleECommerce.Web.Mappers;
+using SampleECommerce.Web.Models;
 
 namespace SampleECommerce.Tests.Controllers;
 
@@ -26,6 +28,7 @@ public class SessionsControllerTests
         string expected,
         [Frozen] ClaimsPrincipal principal,
         [Frozen] HttpContext httpContext, 
+        [Frozen] IMapper<ClaimsPrincipal, UserId> userIdMapper,
         [Frozen] IJwtGenerator jwtGenerator,
         SessionsController sut)
     {
@@ -38,6 +41,7 @@ public class SessionsControllerTests
                         ClaimNames.UserId,
                         userId.ToString(CultureInfo.InvariantCulture))
                 }));
+        userIdMapper.Map(principal).Returns((UserId)userId);
         jwtGenerator.Generate(userId).Returns(expected);
         httpContext.User = principal;
 
