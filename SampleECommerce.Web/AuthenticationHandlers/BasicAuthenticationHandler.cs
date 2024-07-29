@@ -1,13 +1,11 @@
 ﻿using System.Globalization;
 using System.Security.Claims;
-using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.Extensions.Options;
 using Microsoft.Extensions.Primitives;
 using SampleECommerce.Web.BasicAuthDecoders;
 using SampleECommerce.Web.Constants;
-using SampleECommerce.Web.Dtos;
 using SampleECommerce.Web.Services;
 
 namespace SampleECommerce.Web.AuthenticationHandlers;

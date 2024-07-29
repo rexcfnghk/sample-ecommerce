@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Dtos;
+using SampleECommerce.Web.Mappers;
 using SampleECommerce.Web.Models;
 using SampleECommerce.Web.Services;
 using SampleECommerce.Web.Swashbuckle;
@@ -12,11 +13,24 @@ namespace SampleECommerce.Web.Controllers;
 [ApiController]
 [Route("[controller]")]
 [Produces(MediaTypeNames.Application.Json)]
-public class UsersController(IUserSignupService userSignupService, IOrderService orderService, IProductService productService)
+public class UsersController(
+    IUserSignupService userSignupService,
+    IOrderService orderService,
+    IMapper<IEnumerable<Order>, Dictionary<Guid, OrderDto>>
+        ordersToOrderDtosMapper,
+    IMapper<ProductsAndOrderItemsDto, IEnumerable<OrderItem>> orderItemsMapper,
+    IProductService productService)
     : ControllerBase
 {
     private readonly IUserSignupService _userSignupService = userSignupService;
     private readonly IOrderService _orderService = orderService;
+
+    private readonly IMapper<IEnumerable<Order>, Dictionary<Guid, OrderDto>>
+        _ordersToOrderDtosMapper = ordersToOrderDtosMapper;
+
+    private readonly IMapper<ProductsAndOrderItemsDto, IEnumerable<OrderItem>>
+        _orderItemsMapper = orderItemsMapper;
+
     private readonly IProductService _productService = productService;
 
     /// <summary>
@@ -53,7 +67,7 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     /// <response code="400">When there are missing field(s), or the request is malformed</response>
     /// <response code="403">The system cannot authenticate/authorize the user</response>
     [HttpGet("Orders")]
-    [Authorize(AuthenticationSchemes = AuthenticationSchemes.Bearer )]
+    [Authorize(AuthenticationSchemes = AuthenticationSchemes.Bearer)]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
@@ -63,23 +77,9 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
     {
         var orders = await _orderService.ListOrdersAsync(userId.UserId, token);
 
-        var output = orders.ToDictionary(
-            dto => dto.Id,
-            dto => new OrderDto
-            {
-                OrderTime = dto.OrderTime,
-                OrderItems = dto.OrderItems.Select(
-                        oi => new OrderItemDto
-                        {
-                            ProductName = oi.Product.Name,
-                            Quantity = oi.Quantity,
-                            ProductCategory = oi.Product.Category,
-                            ProductPrice = oi.Product.Price
-                        })
-                    .ToList()
-            });
+        var dtos = _ordersToOrderDtosMapper.Map(orders);
 
-        return output;
+        return dtos;
     }
 
     /// <summary>
@@ -110,15 +110,17 @@ public class UsersController(IUserSignupService userSignupService, IOrderService
 
         if (products.Count == 0)
         {
-            var ids = string.Join(',', productIds.Except(products.Select(p => p.Id)));
+            var ids = string.Join(
+                ',',
+                productIds.Except(products.Select(p => p.Id)));
             return BadRequest($"Could not find products with Ids: {ids}");
         }
 
-        var orderItems =
-            from orderItem in postOrderDto.OrderItems
-            from product in products
-            where orderItem.ProductId == product.Id && orderItem.Quantity > 0
-            select new OrderItem(product, orderItem.Quantity.Value);
+        var productsAndOrderItemsDto = new ProductsAndOrderItemsDto(
+            products,
+            postOrderDto.OrderItems);
+
+        var orderItems = _orderItemsMapper.Map(productsAndOrderItemsDto);
 
         var orderItemList = orderItems.ToList();
 

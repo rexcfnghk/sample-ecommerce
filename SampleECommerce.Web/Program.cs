@@ -13,6 +13,7 @@ using SampleECommerce.Web.BasicAuthDecoders;
 using SampleECommerce.Web.Constants;
 using SampleECommerce.Web.Filters;
 using SampleECommerce.Web.Jwt;
+using SampleECommerce.Web.Mappers;
 using SampleECommerce.Web.Repositories;
 using SampleECommerce.Web.Services;
 using SampleECommerce.Web.Swashbuckle;
@@ -122,6 +123,7 @@ container.RegisterSingleton<IProductService, ProductService>();
 container.RegisterSingleton<IProductRepository, SqlProductRepository>();
 container.RegisterSingleton<IBasicAuthDecoder, Base64BasicAuthDecoder>();
 container.RegisterDecorator<IBasicAuthDecoder, CatchFormatExceptionBasicAuthDecoder>(Lifestyle.Singleton);
+container.RegisterSingleton(typeof(IMapper<,>), typeof(IMapper<,>).Assembly);
 container.RegisterSingleton<BasicAuthenticationHandler>();
 
 RegisterJwtIssuer();
