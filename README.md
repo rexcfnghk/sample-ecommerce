@@ -79,7 +79,7 @@ Unit tests can be run by `dotnet test SampleECommerce.Tests/SampleECommerce.Test
 
 ### Integration Tests
 
-A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection under `postman-collections/Sample ECommerce Happy Path Integration Test.postman_collection.json`. The variable `url` should be set to point to URL where the app is listening on.
+A happy path integration test case can be run by importing the [Postman](https://www.postman.com/) collection in [here](./postman-collections/Sample%20ECommerce%20Happy%20Path%20Integration%20Test.postman_collection.json). The variable `url` should be set to point to URL where the app is listening on.
 
 The collection does the following:
 
